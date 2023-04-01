@@ -1,0 +1,3 @@
+ID,bank_CID,first_name,second_name,age,gender,phone_number,email,address
+0,0,Administrator,-,-,-,-,-
+1,1,Test_user_name,Test_user_second_name,20,male,380957234826,test_emanil@cdb.com,"Ukraine, Lyviv, st.Cherva, 13"

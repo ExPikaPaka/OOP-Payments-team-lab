@@ -139,12 +139,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\DB_manager\DataBase.h" />
-    <ClInclude Include="src\interface\interface.h" />
+    <ClInclude Include="src\DateTime\DateTime.h" />
+    <ClInclude Include="src\DB\DataBase.h" />
+    <ClInclude Include="src\Interface\interface.h" />
+    <ClInclude Include="src\DB\UserCDB.h" />
+    <ClInclude Include="src\DB\Transaction.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\DB_manager\DataBase.cpp" />
-    <ClCompile Include="src\interface\interface.cpp" />
+    <ClCompile Include="src\DateTime\DateTime.cpp" />
+    <ClCompile Include="src\DB\DataBase.cpp" />
+    <ClCompile Include="src\Interface\interface.cpp" />
+    <ClCompile Include="src\DB\UserCDB.cpp" />
+    <ClCompile Include="src\DB\Transaction.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\DB\README.md" />
+    <None Include="res\DB\usersList.cdb" />
+    <None Include="res\DB\users_transactions\0.cut" />
+    <None Include="res\DB\users_transactions\1.cut" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

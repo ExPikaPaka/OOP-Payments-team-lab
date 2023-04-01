@@ -1,11 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="src\interface\interface.h" />
-    <ClInclude Include="src\DB_manager\DataBase.h" />
+    <ClInclude Include="src\Interface\interface.h" />
+    <ClInclude Include="src\DB\DataBase.h" />
+    <ClInclude Include="src\DB\UserCDB.h" />
+    <ClInclude Include="src\DB\Transaction.h" />
+    <ClInclude Include="src\DateTime\DateTime.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\interface\interface.cpp" />
-    <ClCompile Include="src\DB_manager\DataBase.cpp" />
+    <ClCompile Include="src\Interface\interface.cpp" />
+    <ClCompile Include="src\DB\DataBase.cpp" />
+    <ClCompile Include="src\DB\UserCDB.cpp" />
+    <ClCompile Include="src\DB\Transaction.cpp" />
+    <ClCompile Include="src\DateTime\DateTime.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\DB\usersList.cdb" />
+    <None Include="res\DB\users_transactions\0.cut" />
+    <None Include="res\DB\users_transactions\1.cut" />
+    <None Include="res\DB\README.md" />
   </ItemGroup>
 </Project>
