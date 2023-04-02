@@ -3,7 +3,7 @@
 #include <vector>
 #include "Transaction.h"
 
-class UserCDB {
+class User {
 protected:
 	std::string ID;
 	std::string bank_CID;
@@ -16,22 +16,25 @@ protected:
 	std::string address;
 	std::vector<Transaction> transactions;
 
-
 	bool isEmailValid(std::string email);
 public:
-	UserCDB();
-	~UserCDB();
+	int transactionsCount;
+	User();
+	User(const User& other);
+	~User();
 
-	std::string getID();
-	std::string getBankCID();
-	std::string getFirstName();
-	std::string getSecondName();
-	int getAge();
-	std::string getGender();
-	std::string getPhoneNumber();
-	std::string getEmail();
-	std::string getAddress();
-	Transaction getTransaction(int transaction_id);
+	std::string getID() const;
+	std::string getBankCID() const;
+	std::string getFirstName() const;
+	std::string getSecondName() const;
+	int getAge() const;
+	std::string getGender() const;
+	std::string getPhoneNumber() const;
+	std::string getEmail() const;
+	std::string getAddress() const;
+	Transaction getTransaction(int transaction_id) const;
+	Transaction getLastTransaction() const;
+	std::vector<Transaction> getTransactions() const;
 
 	void addTransaction(Transaction transaction);
 	void setID(std::string ID);
@@ -43,5 +46,10 @@ public:
 	void setPhoneNumber(std::string phone_number);
 	void setEmail(std::string email);
 	void setAddress(std::string address);
+
+	User& operator=(User& other);
+	User& operator=(User* other);
+
+	std::string toString();
 };
 

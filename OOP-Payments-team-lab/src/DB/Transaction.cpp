@@ -37,7 +37,7 @@ std::string Transaction::getPurpose() {
     return purpose;
 }
 
-DateTime Transaction::getTransactionTime() {
+DateTime& Transaction::transactionTime() {
     return transaction_time;
 }
 
@@ -63,8 +63,4 @@ void Transaction::setCommission(float commission) {
 
 void Transaction::setPurpose(std::string purpose) {
     this->purpose = purpose;
-}
-
-void Transaction::setTransactionTime(DateTime time) {
-    transaction_time = time;
 }

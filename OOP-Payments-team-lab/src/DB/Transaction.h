@@ -21,7 +21,7 @@ public:
 	float getAmout();
 	float getCommission();
 	std::string getPurpose();
-	DateTime getTransactionTime();
+	DateTime& transactionTime();
 
 	void setTransactionID(int transaction_ID);
 	void setSenderBankCID(std::string sender_bank_CID);
@@ -29,6 +29,5 @@ public:
 	void setAmout(float amount);
 	void setCommission(float commission);
 	void setPurpose(std::string purpose);
-	void setTransactionTime(DateTime time);
 };
 

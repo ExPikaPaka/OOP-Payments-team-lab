@@ -3,14 +3,14 @@
   <ItemGroup>
     <ClInclude Include="src\Interface\interface.h" />
     <ClInclude Include="src\DB\DataBase.h" />
-    <ClInclude Include="src\DB\UserCDB.h" />
+    <ClInclude Include="src\DB\User.h" />
     <ClInclude Include="src\DB\Transaction.h" />
     <ClInclude Include="src\DateTime\DateTime.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Interface\interface.cpp" />
     <ClCompile Include="src\DB\DataBase.cpp" />
-    <ClCompile Include="src\DB\UserCDB.cpp" />
+    <ClCompile Include="src\DB\User.cpp" />
     <ClCompile Include="src\DB\Transaction.cpp" />
     <ClCompile Include="src\DateTime\DateTime.cpp" />
   </ItemGroup>
