@@ -24,10 +24,9 @@ User::User() {
 	this->email = "null";
 	this->address = "null";
 	transactions = {};
-	transactionsCount = 0;
 }
 
-User::User(const User& other) {
+User::User(const User& other) : User() {
 	ID = other.getID();
 	bank_CID = other.bank_CID;
 	first_name = other.first_name;
@@ -38,6 +37,21 @@ User::User(const User& other) {
 	email = other.email;
 	address = other.address;
 	transactions = other.transactions;
+}
+
+User::User(const User* other) : User() {
+	if (other != 0) {
+		ID = other->getID();
+		bank_CID = other->bank_CID;
+		first_name = other->first_name;
+		second_name = other->second_name;
+		age = other->age;
+		gender = other->gender;
+		phone_number = other->phone_number;
+		email = other->email;
+		address = other->address;
+		transactions = other->transactions;
+	}
 }
 
 User::~User() {
@@ -94,6 +108,10 @@ Transaction User::getLastTransaction() const {
 	throw std::out_of_range("User has 0 transactions!");
 }
 
+int User::getTransactionsCount() const {
+	return transactions.size();
+}
+
 std::vector<Transaction> User::getTransactions() const {
 	return transactions;
 }
@@ -101,7 +119,6 @@ std::vector<Transaction> User::getTransactions() const {
 
 void User::addTransaction(Transaction transaction) {
 	transactions.push_back(transaction);
-	transactionsCount++;
 }
 
 void User::setID(std::string ID) {
@@ -221,6 +238,19 @@ User& User::operator=(User* other) {
 	transactions = other->getTransactions();
 
 	return *this;
+}
+
+void User::null() {
+	this->ID = "null";
+	this->bank_CID = "null";
+	this->first_name = "null";
+	this->second_name = "null";
+	this->age = -1;
+	this->gender = "null";
+	this->phone_number = "null";
+	this->email = "null";
+	this->address = "null";
+	transactions = {};
 }
 
 std::string User::toString() {

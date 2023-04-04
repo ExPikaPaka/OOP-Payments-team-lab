@@ -18,9 +18,9 @@ protected:
 
 	bool isEmailValid(std::string email);
 public:
-	int transactionsCount;
 	User();
 	User(const User& other);
+	User(const User* other);
 	~User();
 
 	std::string getID() const;
@@ -34,6 +34,7 @@ public:
 	std::string getAddress() const;
 	Transaction getTransaction(int transaction_id) const;
 	Transaction getLastTransaction() const;
+	int getTransactionsCount() const;
 	std::vector<Transaction> getTransactions() const;
 
 	void addTransaction(Transaction transaction);
@@ -50,6 +51,7 @@ public:
 	User& operator=(User& other);
 	User& operator=(User* other);
 
+	void null();
 	std::string toString();
 };
 

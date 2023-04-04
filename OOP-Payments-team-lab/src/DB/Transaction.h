@@ -29,5 +29,7 @@ public:
 	void setAmout(float amount);
 	void setCommission(float commission);
 	void setPurpose(std::string purpose);
+
+	std::string toString();
 };
 
