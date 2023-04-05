@@ -12,4 +12,6 @@ An OPP lab in team. Theme is bank payments system
 ### 21:26 02.04.2023 \ ExPikaPaka:
 - Implemented DB class (now it's possible to create and load DB). DB class loads only users, but transactions load and save is not implemented yet.
 
+### 18:31 04.04.2023 \ ExPikaPaka:
+- Full DB implementation.
 
