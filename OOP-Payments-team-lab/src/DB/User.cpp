@@ -150,7 +150,7 @@ void User::setSecondName(std::string second_name) {
 	if (!second_name.empty()) {
 		this->second_name = second_name;
 	} else {
-		throw std::invalid_argument("ID cannot be empty.");
+		throw std::invalid_argument("Second name cannot be empty.");
 	}
 }
 
@@ -174,7 +174,7 @@ void User::setPhoneNumber(std::string phone_number) {
 	if (phone_number.size() == 12) {
 		this->phone_number = phone_number;
 	} else {																
-		throw std::invalid_argument("Phone number must contain 12 digits. Ex: 380123456789, but given " + phone_number);
+		throw std::invalid_argument("Phone number must contain 12 digits. Ex: \"380123456789\", but given \"" + phone_number + "\"");
 	}
 }
 
@@ -183,7 +183,7 @@ void User::setEmail(std::string email) {
 		if (isEmailValid(email)) {
 			this->email = email;
 		} else {
-			throw std::invalid_argument("Invalid email. Acceptabile is like \"email.example@smail.com.ua\", but given " + email);
+			throw std::invalid_argument("Invalid email. Acceptabile is like \"email.example@smail.com.ua\", but given \"" + email + "\"");
 		}
 	} else {
 		throw std::invalid_argument("Email cannot be empty.");
