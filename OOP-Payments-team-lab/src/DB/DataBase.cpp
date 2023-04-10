@@ -73,7 +73,13 @@ void DataBase::loadUserTransactions(User& user) {
 	std::wstring dirPath(temp.begin(), temp.end());
 
 	// Get transactions count:
-	auto dirIter = std::filesystem::directory_iterator(dirPath);
+	std::filesystem::directory_iterator dirIter;
+	try {
+		dirIter = std::filesystem::directory_iterator(dirPath);
+	} catch (std::filesystem::filesystem_error& e) {
+		return;
+	}
+
 	int fileCount = 0;
 
 	for (auto& entry : dirIter) {

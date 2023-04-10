@@ -54,6 +54,9 @@ namespace UIHelper {
 		int getY();
 		int getW();
 		int getH();
+
+		COLORREF getCurrentFillColor();
+		COLORREF getCurrentOutlineColor();
 	};
 }
 

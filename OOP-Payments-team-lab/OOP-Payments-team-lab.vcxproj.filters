@@ -6,6 +6,12 @@
     <ClInclude Include="src\DB\User.h" />
     <ClInclude Include="src\DB\Transaction.h" />
     <ClInclude Include="src\DateTime\DateTime.h" />
+    <ClInclude Include="src\interface\Timer\Timer.h" />
+    <ClInclude Include="src\interface\WindowHelper\Scene.h" />
+    <ClInclude Include="src\interface\WindowHelper\UIHelper\Button.h" />
+    <ClInclude Include="src\interface\WindowHelper\UIHelper\InputButton.h" />
+    <ClInclude Include="src\interface\WindowHelper\WindowHelper.h" />
+    <ClInclude Include="src\Auth\Auth.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Interface\interface.cpp" />
@@ -13,11 +19,16 @@
     <ClCompile Include="src\DB\User.cpp" />
     <ClCompile Include="src\DB\Transaction.cpp" />
     <ClCompile Include="src\DateTime\DateTime.cpp" />
+    <ClCompile Include="src\interface\Timer\Timer.cpp" />
+    <ClCompile Include="src\interface\WindowHelper\Scene.cpp" />
+    <ClCompile Include="src\interface\WindowHelper\UIHelper\Button.cpp" />
+    <ClCompile Include="src\interface\WindowHelper\UIHelper\InputButton.cpp" />
+    <ClCompile Include="src\interface\WindowHelper\WindowHelper.cpp" />
+    <ClCompile Include="src\Auth\Auth.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\DB\usersList.cdb" />
     <None Include="res\DB\users_transactions\0.cut" />
     <None Include="res\DB\users_transactions\1.cut" />
-    <None Include="res\DB\README.md" />
   </ItemGroup>
 </Project>

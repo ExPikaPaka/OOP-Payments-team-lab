@@ -59,6 +59,9 @@ bool UIHelper::InputButton::getInput() {
 						pressed = false;
 						return true;
 					} else if (buffer[0] == VK_BACK) { // If Backspace pressed - delete last char
+						if (text.size()) {
+							text.pop_back();
+						}
 						if (wtext.size()) {
 							wtext.pop_back();
 							if (wtext.size()) {

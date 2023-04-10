@@ -145,6 +145,7 @@
     <None Include="res\DB\users_transactions\1.cut" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Auth\Auth.cpp" />
     <ClCompile Include="src\DateTime\DateTime.cpp" />
     <ClCompile Include="src\DB\DataBase.cpp" />
     <ClCompile Include="src\DB\Transaction.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="src\interface\WindowHelper\WindowHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Auth\Auth.h" />
     <ClInclude Include="src\DateTime\DateTime.h" />
     <ClInclude Include="src\DB\DataBase.h" />
     <ClInclude Include="src\DB\Transaction.h" />

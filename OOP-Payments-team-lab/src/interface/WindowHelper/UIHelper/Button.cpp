@@ -149,3 +149,11 @@ int UIHelper::Button::getW() {
 int UIHelper::Button::getH() {
 	return h;
 }
+
+COLORREF UIHelper::Button::getCurrentFillColor() {
+	return currentFillColor;
+}
+
+COLORREF UIHelper::Button::getCurrentOutlineColor() {
+	return currentOutlineColor;
+}
