@@ -11,8 +11,8 @@
 
 
 // Auth menu. Returns true if user Authenticated
-bool drawAuth(Scene& scene);
-void drawAddUser(Scene& scene);
+std::string drawAuth(Scene& scene);
+void drawAddUser(Scene& scene, std::string hash);
 
 namespace colors {
 	// Color defines
@@ -23,6 +23,11 @@ namespace colors {
 	static COLORREF bw70 = RGB(70, 70, 70);
 	static COLORREF bw80 = RGB(80, 80, 80);
 	static COLORREF bw90 = RGB(90, 90, 90);
+	static COLORREF bw100 = RGB(100, 100, 100);
+	static COLORREF bw110 = RGB(110, 110, 110);
+	static COLORREF bw120 = RGB(120, 120, 120);
+	static COLORREF bw130 = RGB(130, 130, 130);
+	static COLORREF bw140 = RGB(140, 140, 140);
 	static COLORREF bw255 = RGB(255, 255, 255);
 	static COLORREF btPressedCol = RGB(60, 70, 90);
 }
@@ -57,7 +62,7 @@ int main() {
 
 
 	bool authenticated = false;
-
+	std::string hash = "";
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 		if (msg.message == WM_QUIT) {
@@ -67,18 +72,19 @@ int main() {
 			DispatchMessage(&msg);
 		}
 		if (!authenticated) {
-			authenticated = drawAuth(scene);
+			hash = drawAuth(scene);
+			authenticated = hash.size() ? true : false;
 		}
 
 		if (authenticated) {
-			drawAddUser(scene);
+			drawAddUser(scene, hash);
 		}
 		
 	}	
 }
 
 
-void drawAddUser(Scene& scene) {
+void drawAddUser(Scene& scene, std::string hash) {
 	// Text defines
 	static std::wstring lbSave(L"Сохранить");
 	static std::wstring lbLog(L"Log:");
@@ -160,7 +166,10 @@ void drawAddUser(Scene& scene) {
 			u.setPhoneNumber(btPhoneNumber.text);
 			u.setEmail(btEmail.text);
 			u.setAddress(btAddress.text);
+			u.setBalance(0);
+			u.setHash(hash);
 
+			std::cout << u.getHash() << '\n';
 			DataBase db;
 			db.loadDB("res/DB");
 			db.loadAllUsers();
@@ -168,6 +177,8 @@ void drawAddUser(Scene& scene) {
 			db.addUser(u);
 
 			db.saveAllUsers();
+			
+			lbLogInfo = L"Success";
 		} catch (const std::exception& e) {
 			DateTime tmNow;
 			std::cout << "[" << tmNow.toString() << "] Log: " << e.what() << '\n';
@@ -179,26 +190,28 @@ void drawAddUser(Scene& scene) {
 }
 
 // Auth menu. Returns true if user Authenticated
-bool drawAuth(Scene& scene) {
+std::string drawAuth(Scene& scene) {
 	// Text defines
 	static std::wstring lbAuth(L"  Авторизация  ");
 	static std::wstring lbEmail(L"Почта");
 	static std::wstring LbPassword(L"Пароль");
 	static std::wstring lbLogIn(L"Войти");
-
+	static std::wstring lbSingUp(L"Зарегистрироваться");
+	static std::wstring lbLogInfo;
 
 	bool fieldsNonZero = true;
 	
 
 	// Control defines
 	static int menuWidth = 400;
-	static int menuHeight = 110;
+	static int menuHeight = 120;
 	int xOffset = (scene.width / 2) - menuWidth / 2;
 	int yOffset = (scene.height / 2) - menuHeight / 2;
 
 	static int inBtOffsetX = 60;
 
 	static UIHelper::Button btLogIn(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::Button btSignUp(scene, 0, 0, 0, 0, bw40, bw40, bw40, bw40, btPressedCol, btPressedCol);
 	static UIHelper::InputButton btEmail(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
 	static UIHelper::InputButton btPassword(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
 
@@ -206,6 +219,11 @@ bool drawAuth(Scene& scene) {
 	btLogIn.setY(yOffset + 90);
 	btLogIn.setW(menuWidth);
 	btLogIn.setH(20);
+
+	btSignUp.setX(xOffset);
+	btSignUp.setY(yOffset + 90 + 25);
+	btSignUp.setW(menuWidth);
+	btSignUp.setH(20);
 	
 	btEmail.setX(xOffset + inBtOffsetX);
 	btEmail.setY(yOffset);
@@ -241,10 +259,15 @@ bool drawAuth(Scene& scene) {
 
 	// Draw buttons
 	btLogIn.draw();
+	btSignUp.draw();
 	btEmail.draw();
 	btPassword.draw();
 
 	// Header
+	scene.setPenColor(bw40);
+	scene.setBrushColor(bw40);
+	scene.rect(xOffset + menuWidth / 2 - lbAuth.size() * 10 / 2, yOffset - 50,
+		xOffset + menuWidth / 2 + (lbAuth.size() + 2) * 10 / 2, yOffset - 50 + 27);
 	scene.text((wchar_t*)lbAuth.c_str(), xOffset + menuWidth / 2 - lbAuth.size() * 10 / 2, yOffset - 50, 200, 50, 10, 27, 0, bw255, bw40);
 	scene.setPenColor(bw60);
 	scene.boundingBox(xOffset + menuWidth / 2 - lbAuth.size() * 10 / 2, yOffset - 50,
@@ -255,22 +278,32 @@ bool drawAuth(Scene& scene) {
 	scene.text((wchar_t*)LbPassword.c_str(), xOffset, yOffset + 30, inBtOffsetX, 20, 7, 16, 0, bw255, bw40);
 	
 	// Log in label
-	scene.text((wchar_t*)lbLogIn.c_str(), xOffset + menuWidth / 2 - (lbLogIn.size() - 2) * 7, yOffset + 90,
+	scene.text((wchar_t*)lbLogIn.c_str(), xOffset + menuWidth / 2 - (lbLogIn.size() / 2) * 7, yOffset + 90,
 		100, 20, 7, 16, 0, bw255, btLogIn.getCurrentFillColor());
 
+	// Sign up labbel 
+	scene.text((wchar_t*)lbSingUp.c_str(), xOffset + (menuWidth / 2) - (lbSingUp.size() / 2) * 7, yOffset + 115,
+		150, 20, 7, 16, 0, bw140, btSignUp.getCurrentFillColor());
 
-	
+
+	// LogInfo label
+	if (lbLogInfo.size()) {
+		scene.setBrushColor(bw40);
+		scene.setPenColor(bw60);
+		scene.rect(xOffset - 20, yOffset + menuHeight + 50, xOffset + menuWidth + 20, yOffset + menuHeight + 120);
+		scene.text((wchar_t*)lbLogInfo.c_str(), xOffset, yOffset + menuHeight + 50 + 10, menuWidth, 50, 7, 16, 0, RGB(255, 100, 100), bw40);
+	}
 
 	// Check if input > 0
 	if (!btEmail.text.size()) {
-		scene.setBrushColor(RGB(200, 60, 60));
-		scene.setPenColor(RGB(200, 60, 60));
+		scene.setBrushColor(RGB(255, 100, 100));
+		scene.setPenColor(RGB(255, 100, 100));
 		scene.ellipse(xOffset + menuWidth + 5, yOffset + 5, xOffset + menuWidth + 15, yOffset + 15);
 		fieldsNonZero = false;
 	}
 	if (!btPassword.text.size()) {
-		scene.setBrushColor(RGB(200, 60, 60));
-		scene.setPenColor(RGB(200, 60, 60));
+		scene.setBrushColor(RGB(255, 100, 100));
+		scene.setPenColor(RGB(255, 100, 100));
 		scene.ellipse(xOffset + menuWidth + 5, yOffset + 5 + 30, xOffset + menuWidth + 15, yOffset + 15 + 30);
 		fieldsNonZero = false;
 	}
@@ -283,11 +316,98 @@ bool drawAuth(Scene& scene) {
 
 	// Log in check
 	if (btLogIn.isPressed() && fieldsNonZero) {
-		std::string toHasSum = btEmail.text + btPassword.text;
+		// Checking email
+		User u;
+		bool goodEmail = false;
+		try {
+			u.setEmail(btEmail.text);
+			goodEmail = true;
+		} catch (const std::exception& e) {
+			std::string tmp(e.what());
+			lbLogInfo = std::wstring(tmp.begin(), tmp.end());
+		}
 
-		Auth auth;
-		std::cout << auth.hash256(toHasSum) << '\n';
-		return true;
+
+		if (goodEmail) {
+			// Calculating hash
+			std::string toHasSum = btEmail.text + btPassword.text;
+
+			Auth auth;
+			std::string hash = auth.hash256(toHasSum);
+
+			DataBase db;
+			db.loadDB("res/DB");
+			db.loadAllUsers();
+
+			// Findig user
+			for (int i = 0; i < db.usersCount(); i++) {
+				if (db.at(i)->getEmail() == btEmail.text) {
+					u = db.at(i);
+					break;
+				}
+				lbLogInfo = L"Указанный пользователь не найден! Попробуйте снова.";
+			}
+
+			// If we found user
+			if (u.getID() != "null") {
+				std::cout << "Calculated hash: " << hash << '\n';
+				std::cout << "User hash: " << u.getHash() << '\n';
+
+				lbLogInfo = L"Неправильный пароль!";
+				if (hash == u.getHash()) {
+					lbLogInfo = L"С возвращением!";
+					return hash;
+				}
+			}
+
+		}
+
 	}
-	return false;
+
+	if (btSignUp.isPressed() && fieldsNonZero) {
+		// Checking email
+		User u;
+		bool goodEmail = false;
+		try {
+			u.setEmail(btEmail.text);
+			goodEmail = true;
+		} catch (const std::exception&e) {
+			std::string tmp(e.what());
+			lbLogInfo = std::wstring(tmp.begin(), tmp.end());
+		}
+
+
+		if (goodEmail) {
+			// Calculating hash
+			std::string toHasSum = btEmail.text + btPassword.text;
+
+			Auth auth;
+			std::string hash = auth.hash256(toHasSum);
+
+			DataBase db;
+			db.loadDB("res/DB");
+			db.loadAllUsers();
+
+			// Findig user
+			for (int i = 0; i < db.usersCount(); i++) {
+				if (db.at(i)->getEmail() == btEmail.text) {
+					u = db.at(i);
+					lbLogInfo = L"Указанный пользователь уже существует! \nПопробуйте войти.";
+					break;
+				}
+			}
+			u.setHash(hash);
+
+			// If user not found - add new
+			if (u.getID() == "null") {
+				std::cout << "Calculated hash: " << hash << '\n';
+				std::cout << "User hash: " << u.getHash() << '\n';
+
+
+				// Implement logic here
+				return hash;
+			}
+		}
+	}
+	return std::string();
 }

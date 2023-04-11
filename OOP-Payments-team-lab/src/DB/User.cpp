@@ -23,34 +23,40 @@ User::User() {
 	this->phone_number = "null";
 	this->email = "null";
 	this->address = "null";
+	balance = 0;
+	hash = "";
 	transactions = {};
 }
 
 User::User(const User& other) : User() {
 	ID = other.getID();
-	bank_CID = other.bank_CID;
-	first_name = other.first_name;
-	second_name = other.second_name;
-	age = other.age;
-	gender = other.gender;
-	phone_number = other.phone_number;
-	email = other.email;
-	address = other.address;
-	transactions = other.transactions;
+	bank_CID = other.getBankCID();
+	first_name = other.getFirstName();
+	second_name = other.getSecondName();
+	age = other.getAge();
+	gender = other.getGender();
+	phone_number = other.getPhoneNumber();
+	email = other.getEmail();
+	address = other.getAddress();
+	balance = other.getBalance();
+	hash = other.getHash();
+	transactions = other.getTransactions();
 }
 
 User::User(const User* other) : User() {
 	if (other != 0) {
 		ID = other->getID();
-		bank_CID = other->bank_CID;
-		first_name = other->first_name;
-		second_name = other->second_name;
-		age = other->age;
-		gender = other->gender;
-		phone_number = other->phone_number;
-		email = other->email;
-		address = other->address;
-		transactions = other->transactions;
+		bank_CID = other->getBankCID();
+		first_name = other->getFirstName();
+		second_name = other->getSecondName();
+		age = other->getAge();
+		gender = other->getGender();
+		phone_number = other->getPhoneNumber();
+		email = other->getEmail();
+		address = other->getAddress();
+		balance = other->getBalance();
+		hash = other->getHash();
+		transactions = other->getTransactions();
 	}
 }
 
@@ -92,6 +98,14 @@ std::string User::getEmail() const {
 
 std::string User::getAddress() const {
 	return address;
+}
+
+float User::getBalance() const {
+	return balance;
+}
+
+std::string User::getHash() const {
+	return hash;
 }
 
 Transaction User::getTransaction(int transaction_id) const {
@@ -198,6 +212,14 @@ void User::setAddress(std::string address) {
 	}
 }
 
+void User::setBalance(float value) {
+	this->balance = value;
+}
+
+void User::setHash(std::string hash) {
+	this->hash = hash;
+}
+
 User& User::operator=(User& other) {
 	if (this == &other) {
 		return *this;
@@ -236,6 +258,8 @@ User& User::operator=(User* other) {
 	email = other->getEmail();
 	address = other->getAddress();
 	transactions = other->getTransactions();
+	balance = other->getBalance();
+	hash = other->getHash();
 
 	return *this;
 }

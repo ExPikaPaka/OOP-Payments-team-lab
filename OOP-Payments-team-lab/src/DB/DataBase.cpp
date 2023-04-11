@@ -13,12 +13,8 @@ std::vector<std::vector<std::string>> DataBase::getUsersListString() {
 			"\" at std::vector<std::vector<std::string>> DataBase::getUsersListString()");
 	}
 
-	// Checking if file fields are ok
-	int fieldsCount = 9;
-
 	// Reading single line (to the '\n')
 	std::string line;
-	char delimiter = '}';
 	int prevLineEndPos = 0;
 	int lineIterator = 0;
 
@@ -172,7 +168,7 @@ void DataBase::saveUserTransactions(User& user) {
 DataBase::DataBase() {
 	usersListPath = "usersList.cdb";
 	userTransacPath = "users_transactions";
-	fieldsCount = 9;
+	fieldsCount = 11;
 	delimiter = '}';
 }
 
@@ -181,7 +177,7 @@ DataBase::DataBase(std::string path, std::string usersListPath, std::string user
 	this->usersListPath = usersListPath;
 	this->userTransacPath = userTransacPath;
 	loadDB(path, usersListPath, userTransacPath);
-	fieldsCount = 9;
+	fieldsCount = 11;
 	delimiter = '}';
 }
 
@@ -219,7 +215,7 @@ void DataBase::saveDB(std::string path, std::string usersListPath, std::string u
 	std::ofstream fs(path + "/" + usersListPath);
 
 	if (!fs.is_open()) {
-		throw std::ios_base::failure("Could not ope file \"" + path + "/" + usersListPath + "\"");
+		throw std::ios_base::failure("Could not open file \"" + path + "/" + usersListPath + "\"");
 	}
 
 	for (int i = 0; i < users.size(); i++) {
@@ -288,6 +284,8 @@ bool DataBase::loadUser(std::string ID) {
 			current.setPhoneNumber(fields[6]);
 			current.setEmail(fields[7]);
 			current.setAddress(fields[8]);
+			current.setBalance(std::stof(fields[9]));
+			current.setHash(fields[10]);
 
 			if (ID == "-any" || ID == current.getID()) {
 				try {
@@ -333,7 +331,7 @@ void DataBase::saveUser(std::string ID) {
 	}
 
 	// Corrceting specified user
-	bool changed = 0;
+	bool addNew = 1;
 	for (int i = 0; i < usersData.size(); i++) {
 		if (usersData[i][0] == ID) {
 			usersData[i][0] = target.getID();
@@ -345,12 +343,14 @@ void DataBase::saveUser(std::string ID) {
 			usersData[i][6] = target.getPhoneNumber();
 			usersData[i][7] = target.getEmail();
 			usersData[i][8] = target.getAddress();
-			changed = 1;
+			usersData[i][9] = std::to_string(target.getBalance());
+			usersData[i][10] = target.getHash();
+			addNew = 0;
 		}
 	}
 
 	// If adding new user, not changing then adding to the array
-	if (!changed) {
+	if (addNew) {
 		std::vector<std::string> current;
 		current.push_back(target.getID());
 		current.push_back(target.getBankCID());
@@ -361,6 +361,8 @@ void DataBase::saveUser(std::string ID) {
 		current.push_back(target.getPhoneNumber());
 		current.push_back(target.getEmail());
 		current.push_back(target.getAddress());
+		current.push_back(std::to_string(target.getBalance()));
+		current.push_back(target.getHash());
 		usersData.push_back(current);
 	}
 

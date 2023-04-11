@@ -1,9 +1,2 @@
-ID}bank_CID}first_name}second_name}age}gender}phone_number}email}address
-0}0}Administrator}0}0}0}123456789012}0@0.0}0
-1}1}Test_user_name}Test_user_second_name}20}male}380957234826}test_emanil@cdb.com}Ukraine, Lyviv, st.Cherva, 13
-2}2}Test_user_name2}Test_user_second_name2}202}mal2e}380937234826}tesanil@cdb.com}Ukraine, ga, st.da, ga
-11}null}Rex}null}52}null}123456789012}Zaka.Zaka@Gmail.com}Unde rroof
-13}null}ППробуем русские символы}null}52}null}123456789012}Zaka.Za4ka@Gmail.com}А дальше уже посмотрим rroof
-23}null}Asdasf}Неко}20}Мужской}380957235826}nikoneko@gmail.com}null
-14}null}Огурчик}Рик}2000}Огурец}012345678912}cucumber.rick@cu.em.co}null
-93}null}1}1}1}1}123456789012}2@2.2}1
+ID}bank_CID}first_name}second_name}age}gender}phone_number}email}address}balance}hash
+0}null}Admin}null}20}Male}000000000000}Admin@au.co}null}0.000000}8b6d70266133f7627dfadd3471b3c3199b065223a659e3f4b6883d8b8cb9ec4c

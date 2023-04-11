@@ -14,6 +14,8 @@ protected:
 	std::string phone_number;
 	std::string email;
 	std::string address;
+	float balance;
+	std::string hash;
 	std::vector<Transaction> transactions;
 
 	bool isEmailValid(std::string email);
@@ -32,6 +34,8 @@ public:
 	std::string getPhoneNumber() const;
 	std::string getEmail() const;
 	std::string getAddress() const;
+	float getBalance() const;
+	std::string getHash() const;
 	Transaction getTransaction(int transaction_id) const;
 	Transaction getLastTransaction() const;
 	int getTransactionsCount() const;
@@ -47,6 +51,8 @@ public:
 	void setPhoneNumber(std::string phone_number);
 	void setEmail(std::string email);
 	void setAddress(std::string address);
+	void setBalance(float value);
+	void setHash(std::string hash);
 
 	User& operator=(User& other);
 	User& operator=(User* other);
