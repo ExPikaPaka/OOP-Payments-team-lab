@@ -18,3 +18,6 @@ An OPP lab in team. Theme is bank payments system
 
 * 00:54 10.04.2023 \ ExPikaPaka:
   * Added UI classes, and demo which allows to interact with DB via adding new user.
+  
+* 17.02 10.04.2023 \ ExPikaPaka:
+  * Added UI login page and Auth module (Fileds verification not implemented yet)
