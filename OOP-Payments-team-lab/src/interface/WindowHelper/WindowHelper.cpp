@@ -15,7 +15,7 @@ HWND WindowHelper::initWindow(wchar_t winName[], int x, int y, int width, int he
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
 	wcex.lpszClassName = CLASS_NAME;
 	wcex.hCursor = LoadCursor(0, IDC_ARROW);
-	wcex.hbrBackground = CreateSolidBrush(RGB(80, 80, 80));
+	wcex.hbrBackground = CreateSolidBrush(RGB(30, 30, 30));
 	wcex.lpfnWndProc = DefWindowProc;
 	RegisterClass(&wcex);
 

@@ -11,8 +11,11 @@
 
 
 // Auth menu. Returns true if user Authenticated
-std::string drawAuth(Scene& scene);
-void drawAddUser(Scene& scene, std::string hash);
+User drawAuth(Scene& scene, DataBase& db, bool clearTextFields = false);
+User drawRegister(Scene& scene, DataBase& db, User& hash, bool clearTextFields = false);
+void drawOptionsMenu(Scene& scene, DataBase& db, User& user);
+void drawTransferMenu(Scene& scene, DataBase& db, User& user, User& target);
+
 
 namespace colors {
 	// Color defines
@@ -61,7 +64,24 @@ int main() {
 	scene.backgroundColor = bgCol;
 
 
+	// Database loading
+	DataBase db;
+
+	try {
+		db.loadDB("res/DB");
+		db.loadAllUsers();
+	} catch (const std::exception& e) {
+		std::cout << "Error during DataBase loading:\n" << e.what() << '\n';
+	}
+
+
 	bool authenticated = false;
+	bool registerMode = false;
+
+	bool clearAuthFieldsOnce = false;
+	bool clearRegFieldsOnce = false;
+	User currUser;
+	User regUser;
 	std::string hash = "";
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
@@ -71,126 +91,53 @@ int main() {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+
+		// Draw auth menu
 		if (!authenticated) {
-			hash = drawAuth(scene);
-			authenticated = hash.size() ? true : false;
+			if (!registerMode) {
+				currUser = drawAuth(scene, db, clearAuthFieldsOnce);
+				hash = currUser.getHash();
+
+				if (currUser.getID() == "register") {
+					registerMode = true;
+					clearRegFieldsOnce = true;
+					continue;
+				} else {
+					authenticated = hash.size() ? true : false;
+				}
+			} else { // Draw register menu
+				regUser = drawRegister(scene, db, currUser, clearRegFieldsOnce);
+
+				// Canceling if case
+				if (regUser.getID() == "cancel") {
+					registerMode = false;
+					clearAuthFieldsOnce = true;
+					continue;
+				} else if (regUser.getID() != "null") {// Registering user
+					// LOGIC HERE
+					currUser = regUser;
+					registerMode = false;
+					authenticated = true;
+				}
+			}
 		}
 
 		if (authenticated) {
-			drawAddUser(scene, hash);
+			drawOptionsMenu(scene, db, currUser);
 		}
-		
+
+		// Clearing auth and reg fields if needed once
+		if (clearAuthFieldsOnce) {
+			clearAuthFieldsOnce = false;
+		}
+		if (clearRegFieldsOnce) {
+			clearRegFieldsOnce = false;
+		}
 	}	
 }
 
-
-void drawAddUser(Scene& scene, std::string hash) {
-	// Text defines
-	static std::wstring lbSave(L"Сохранить");
-	static std::wstring lbLog(L"Log:");
-	static std::wstring lbLogInfo;
-	static std::wstring lbID(L"ID код");
-	static std::wstring lbFirstName(L"Имя");
-	static std::wstring lbSecondName(L"Фамилия");
-	static std::wstring lbAge(L"Возраст");
-	static std::wstring lbGender(L"Пол");
-	static std::wstring lbPhoneNumber(L"Тел. номер");
-	static std::wstring lbEmail(L"Ел. почта");
-	static std::wstring lbAddress(L"Адресс");
-
-
-	// Scene elements
-	static UIHelper::Button btSave(scene, 450, 10, 20, 20, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btID(scene, 110, 10, 200, 20, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btFirstName(scene, 110, 40, 200, 20, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btSecondName(scene, 110, 70, 200, 20, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btAge(scene, 110, 100, 200, 20, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btGender(scene, 110, 130, 200, 20, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btPhoneNumber(scene, 110, 160, 200, 20, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btEmail(scene, 110, 190, 200, 20, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btAddress(scene, 110, 220, 200, 20, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-
-
-	// Begin scene drawing
-	scene.beginPaint();
-
-	scene.text((wchar_t*)lbID.c_str(), 10, 10, 100, 20, 7, 16, 0, bw255, bgCol);
-	scene.text((wchar_t*)lbFirstName.c_str(), 10, 40, 100, 20, 7, 16, 0, bw255, bgCol);
-	scene.text((wchar_t*)lbSecondName.c_str(), 10, 70, 100, 20, 7, 16, 0, bw255, bgCol);
-	scene.text((wchar_t*)lbAge.c_str(), 10, 100, 100, 20, 7, 16, 0, bw255, bgCol);
-	scene.text((wchar_t*)lbGender.c_str(), 10, 130, 100, 20, 7, 16, 0, bw255, bgCol);
-	scene.text((wchar_t*)lbPhoneNumber.c_str(), 10, 160, 100, 20, 7, 16, 0, bw255, bgCol);
-	scene.text((wchar_t*)lbEmail.c_str(), 10, 190, 100, 20, 7, 16, 0, bw255, bgCol);
-	scene.text((wchar_t*)lbAddress.c_str(), 10, 220, 100, 20, 7, 16, 0, bw255, bgCol);
-	scene.text((wchar_t*)lbSave.c_str(), 350, 10, 100, 20, 7, 16, 0, bw255, bgCol);
-
-	scene.setPenColor(bw50);
-	scene.setBrushColor(bw50);
-	scene.rect(10, 250, 10 + 300, 250 + 100);
-	scene.text((wchar_t*)lbLog.c_str(), 15, 250, 100, 20, 7, 16, 0, bw255, bw50);
-	scene.text((wchar_t*)lbLogInfo.c_str(), 15, 270, 300, 80, 7, 16, 0, bw255, bw50);
-
-	btID.draw();
-	btFirstName.draw();
-	btSecondName.draw();
-	btAge.draw();
-	btGender.draw();
-	btPhoneNumber.draw();
-	btEmail.draw();
-	btAddress.draw();
-
-	btSave.draw();
-
-	// End scene drawing
-	scene.endPaint();
-
-
-
-	btID.getInput();
-	btFirstName.getInput();
-	btSecondName.getInput();
-	btAge.getInput();
-	btGender.getInput();
-	btPhoneNumber.getInput();
-	btEmail.getInput();
-	btAddress.getInput();
-
-	if (btSave.isPressed()) {
-		try {
-			User u;
-			u.setID(btID.text);
-			u.setFirstName(btFirstName.text);
-			u.setSecondName(btSecondName.text);
-			u.setAge(std::stoi(btAge.text));
-			u.setGender(btGender.text);
-			u.setPhoneNumber(btPhoneNumber.text);
-			u.setEmail(btEmail.text);
-			u.setAddress(btAddress.text);
-			u.setBalance(0);
-			u.setHash(hash);
-
-			std::cout << u.getHash() << '\n';
-			DataBase db;
-			db.loadDB("res/DB");
-			db.loadAllUsers();
-
-			db.addUser(u);
-
-			db.saveAllUsers();
-			
-			lbLogInfo = L"Success";
-		} catch (const std::exception& e) {
-			DateTime tmNow;
-			std::cout << "[" << tmNow.toString() << "] Log: " << e.what() << '\n';
-
-			std::string tmp(e.what());
-			lbLogInfo = std::wstring(tmp.begin(), tmp.end());
-		}
-	}
-}
-
 // Auth menu. Returns true if user Authenticated
-std::string drawAuth(Scene& scene) {
+User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 	// Text defines
 	static std::wstring lbAuth(L"  Авторизация  ");
 	static std::wstring lbEmail(L"Почта");
@@ -200,6 +147,7 @@ std::string drawAuth(Scene& scene) {
 	static std::wstring lbLogInfo;
 
 	bool fieldsNonZero = true;
+	bool clTextFields = clearTextFields;
 	
 
 	// Control defines
@@ -215,25 +163,21 @@ std::string drawAuth(Scene& scene) {
 	static UIHelper::InputButton btEmail(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
 	static UIHelper::InputButton btPassword(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
 
-	btLogIn.setX(xOffset);
-	btLogIn.setY(yOffset + 90);
-	btLogIn.setW(menuWidth);
-	btLogIn.setH(20);
+	// Clearing fields if needed
+	if (clTextFields) {
+		btEmail.text.clear();
+		btEmail.wtext.clear();
 
-	btSignUp.setX(xOffset);
-	btSignUp.setY(yOffset + 90 + 25);
-	btSignUp.setW(menuWidth);
-	btSignUp.setH(20);
-	
-	btEmail.setX(xOffset + inBtOffsetX);
-	btEmail.setY(yOffset);
-	btEmail.setW(menuWidth - inBtOffsetX);
-	btEmail.setH(20);
-	
-	btPassword.setX(xOffset + inBtOffsetX);
-	btPassword.setY(yOffset + 30);
-	btPassword.setW(menuWidth - inBtOffsetX);
-	btPassword.setH(20);
+		btPassword.text.clear();
+		btPassword.wtext.clear();
+	}
+
+
+	// Reshaping if menu size changed
+	btLogIn.setShape(xOffset, yOffset + 90, menuWidth, 20);
+	btSignUp.setShape(xOffset, yOffset + 90 + 25, menuWidth, 20);
+	btEmail.setShape(xOffset + inBtOffsetX, yOffset, menuWidth - inBtOffsetX, 20);
+	btPassword.setShape(xOffset + inBtOffsetX, yOffset + 30, menuWidth - inBtOffsetX, 20);
 
 
 
@@ -283,7 +227,7 @@ std::string drawAuth(Scene& scene) {
 
 	// Sign up labbel 
 	scene.text((wchar_t*)lbSingUp.c_str(), xOffset + (menuWidth / 2) - (lbSingUp.size() / 2) * 7, yOffset + 115,
-		150, 20, 7, 16, 0, bw140, btSignUp.getCurrentFillColor());
+		150, 20, 7, 16, 0, bw100, btSignUp.getCurrentFillColor());
 
 
 	// LogInfo label
@@ -335,10 +279,6 @@ std::string drawAuth(Scene& scene) {
 			Auth auth;
 			std::string hash = auth.hash256(toHasSum);
 
-			DataBase db;
-			db.loadDB("res/DB");
-			db.loadAllUsers();
-
 			// Findig user
 			for (int i = 0; i < db.usersCount(); i++) {
 				if (db.at(i)->getEmail() == btEmail.text) {
@@ -351,12 +291,12 @@ std::string drawAuth(Scene& scene) {
 			// If we found user
 			if (u.getID() != "null") {
 				std::cout << "Calculated hash: " << hash << '\n';
-				std::cout << "User hash: " << u.getHash() << '\n';
+				std::cout << "User hash:       " << u.getHash() << '\n';
 
 				lbLogInfo = L"Неправильный пароль!";
 				if (hash == u.getHash()) {
 					lbLogInfo = L"С возвращением!";
-					return hash;
+					return u;
 				}
 			}
 
@@ -364,6 +304,7 @@ std::string drawAuth(Scene& scene) {
 
 	}
 
+	// Register check
 	if (btSignUp.isPressed() && fieldsNonZero) {
 		// Checking email
 		User u;
@@ -401,13 +342,262 @@ std::string drawAuth(Scene& scene) {
 			// If user not found - add new
 			if (u.getID() == "null") {
 				std::cout << "Calculated hash: " << hash << '\n';
-				std::cout << "User hash: " << u.getHash() << '\n';
+				std::cout << "User hash:       " << u.getHash() << '\n';
 
-
-				// Implement logic here
-				return hash;
+				u.setID("register");
+				return u;
 			}
 		}
 	}
-	return std::string();
+	return User();
+}
+
+// Regestration menu.
+User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) {
+
+	// User info defines
+	static bool isMale = false;
+	static bool isFemale = false;
+	bool fieldsNonZero = true;
+	bool clTextFields = clearTextFields;
+
+	// Labels defines
+	static std::wstring lbSignUpAsk(L"  Регистрация  ");
+	static std::wstring lbFirstName(L"Имя");
+	static std::wstring lbSecondName(L"Фамилия");
+	static std::wstring lbAge(L"Возраст");
+	static std::wstring lbGender(L"Пол");
+	static std::wstring lbMale(L"мужской");
+	static std::wstring lbFemale(L"женский");
+	static std::wstring lbPhoneNumber(L"Тел. номер");
+	static std::wstring lbEmail(L"Ел. почта");
+	static std::wstring lbAdress(L"Адресс");
+	static std::wstring lbCancel(L"Отменить");
+	static std::wstring lbSignUp(L"Зарегестрироваться");
+	
+	// Buttons defines
+	static UIHelper::InputButton btFirstName(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btSecondName(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btAge(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::Button btMale(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::Button btFemale(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btPhoneNumber(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btEmail(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btAdress(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::Button btSignUp(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::Button btCancel(scene, 0, 0, 0, 0, bw40, bw40, bw40, bw40, btPressedCol, btPressedCol);
+
+	// Menu shape defines
+	static int menuWidth = 400;
+	static int menuHeight = 290;
+	int xOffset = (scene.width / 2) - menuWidth / 2;
+	int yOffset = (scene.height / 2) - menuHeight / 2;
+	int xLbOffset = 100;
+  
+
+
+	// Clearing fields if needed
+	if (clTextFields) {
+		btFirstName.text.clear();
+		btFirstName.wtext.clear();
+		
+		btSecondName.text.clear();
+		btSecondName.wtext.clear();
+		
+		btAge.text.clear();
+		btAge.wtext.clear();
+		
+		btPhoneNumber.text.clear();
+		btPhoneNumber.wtext.clear();
+		
+		btEmail.text.clear();
+		btEmail.wtext.clear();
+		
+		btAdress.text.clear();
+		btAdress.wtext.clear();
+		
+		isFemale = false;
+		isMale = false;
+	}
+
+
+
+	// Begin painting
+	scene.beginPaint();
+
+	// Filling custom bgColor
+	scene.setBrushColor(RGB(30, 32, 34));
+	scene.setPenColor(RGB(30, 32, 34));
+	scene.rect(0, 0, scene.width, scene.height);
+
+	// Filling menu
+	scene.setBrushColor(bw40);
+	scene.setPenColor(bw60);
+	scene.rect(xOffset - 20, yOffset - 20, xOffset + menuWidth + 20, yOffset + menuHeight + 20);
+
+
+	//		 Labels draw
+	// SignUp message drawing
+	scene.setPenColor(bw40);
+	scene.setBrushColor(bw40);
+	scene.rect(xOffset + menuWidth / 2 - ((lbSignUpAsk.size() + 1) * 10 / 2), yOffset - 27 / 2 - 20,
+		xOffset + menuWidth / 2 + ((lbSignUpAsk.size() + 1) * 10 / 2), yOffset + 27 / 2 - 20);
+
+	scene.text((wchar_t*)lbSignUpAsk.c_str(), xOffset + menuWidth / 2 - ((lbSignUpAsk.size() + 1) * 10 / 2), yOffset - 27 / 2 - 20,
+		600, 27, 10, 27, 0, bw255, bw40);
+
+	scene.setPenColor(bw60);
+	scene.boundingBox(xOffset + menuWidth / 2 - ((lbSignUpAsk.size() + 1) * 10 / 2), yOffset - 27 / 2 - 20,
+		xOffset + menuWidth / 2 + ((lbSignUpAsk.size() + 1) * 10 / 2), yOffset + 27 / 2 - 20);
+
+
+
+	// Reshaping buttons
+	btFirstName.setShape(xOffset + xLbOffset, yOffset + 20, menuWidth - xLbOffset, 20);
+	btSecondName.setShape(xOffset + xLbOffset, yOffset + 20 + 30, menuWidth - xLbOffset, 20);
+	btAge.setShape(xOffset + xLbOffset, yOffset + 20 + 60, menuWidth - xLbOffset, 20);
+	btMale.setShape(xOffset + xLbOffset, yOffset + 20 + 90, (menuWidth - xLbOffset) / 2 - 5, 20);
+	btFemale.setShape(xOffset + xLbOffset + ((menuWidth - xLbOffset) / 2 + 5), yOffset + 20 + 90, (menuWidth - xLbOffset) / 2 - 5, 20);
+	btPhoneNumber.setShape(xOffset + xLbOffset, yOffset + 20 + 120, menuWidth - xLbOffset, 20);
+	btEmail.setShape(xOffset + xLbOffset, yOffset + 20 + 150, menuWidth - xLbOffset, 20);
+	btAdress.setShape(xOffset + xLbOffset, yOffset + 20 + 180, menuWidth - xLbOffset, 20);
+	btSignUp.setShape(xOffset, yOffset + 20 + 240, menuWidth, 20);
+	btCancel.setShape(xOffset, yOffset + 20 + 265, menuWidth, 20);
+
+
+	// Male female color and boolean logic
+	if (btMale.isPressed()) {
+		isMale = true;
+		isFemale = false;
+	}
+	if (btFemale.isPressed()) {
+		isFemale = true;
+		isMale = false;
+	}
+	if (isMale) {
+		btMale.setFillColor(btPressedCol);
+		btMale.setOutlineColor(btPressedCol);
+		btMale.setHoverFillColor(btPressedCol);
+		btMale.setHoverOutlineColor(btPressedCol);
+	} else {
+		btMale.setFillColor(bw50);
+		btMale.setOutlineColor(bw50);
+		btMale.setHoverFillColor(bw60);
+		btMale.setHoverOutlineColor(bw60);
+	}
+	if (isFemale) {
+		btFemale.setFillColor(btPressedCol);
+		btFemale.setOutlineColor(btPressedCol);
+		btFemale.setHoverFillColor(btPressedCol);
+		btFemale.setHoverOutlineColor(btPressedCol);
+	} else {
+		btFemale.setFillColor(bw50);
+		btFemale.setOutlineColor(bw50);
+		btFemale.setHoverFillColor(bw60);
+		btFemale.setHoverOutlineColor(bw60);
+	}
+
+	// Drawing buttons
+	btFirstName.draw();
+	btSecondName.draw();
+	btAge.draw();
+	btMale.draw();
+	btFemale.draw();
+	btPhoneNumber.draw();
+	btEmail.draw();
+	btAdress.draw();
+	btSignUp.draw();
+	btCancel.draw();
+
+
+	// Other labels draw
+	scene.text((wchar_t*)lbFirstName.c_str(), xOffset, yOffset + 20, 200, 20, 7, 16, 0, bw255, bw40);
+	scene.text((wchar_t*)lbSecondName.c_str(), xOffset, yOffset + 20 + 30, 200, 20, 7, 16, 0, bw255, bw40);
+	scene.text((wchar_t*)lbAge.c_str(), xOffset, yOffset + 20 + 60, 200, 20, 7, 16, 0, bw255, bw40);
+	scene.text((wchar_t*)lbGender.c_str(), xOffset, yOffset + 20 + 90, 200, 20, 7, 16, 0, bw255, bw40);
+	scene.text((wchar_t*)lbMale.c_str(), xOffset + xLbOffset + ((menuWidth - xLbOffset) / 2 - 5 - (lbMale.size() + 1) * 7) / 2, yOffset + 20 + 90, 200, 20, 7, 16, 0, bw255, btMale.getCurrentFillColor());
+	scene.text((wchar_t*)lbFemale.c_str(), xOffset + xLbOffset + ((menuWidth - xLbOffset) / 2 + 5) + ((menuWidth - xLbOffset) / 2 - 5 - (lbMale.size() + 1) * 7) / 2, yOffset + 20 + 90, 200, 20, 7, 16, 0, bw255, btFemale.getCurrentFillColor());
+	scene.text((wchar_t*)lbPhoneNumber.c_str(), xOffset, yOffset + 20 + 120, 200, 20, 7, 16, 0, bw255, bw40);
+	scene.text((wchar_t*)lbEmail.c_str(), xOffset, yOffset + 20 + 150, 200, 20, 7, 16, 0, bw255, bw40);
+	scene.text((wchar_t*)lbAdress.c_str(), xOffset, yOffset + 20 + 180, 200, 20, 7, 16, 0, bw255, bw40);
+	scene.text((wchar_t*)lbSignUp.c_str(), xOffset + (menuWidth - (lbSignUp.size() + 1) * 7) / 2, yOffset + 20 + 240, 200, 20, 7, 16, 0, bw255, btSignUp.getCurrentFillColor());
+	scene.text((wchar_t*)lbCancel.c_str(), xOffset + (menuWidth - (lbCancel.size() + 1) * 7) / 2, yOffset + 20 + 265, 200, 20, 7, 16, 0, bw100, btCancel.getCurrentFillColor());
+
+
+	// Painting red ball in case some fields are empty
+	scene.setBrushColor(RGB(255, 100, 100));
+	scene.setPenColor(RGB(255, 100, 100));
+	if (!btFirstName.text.size()) {
+		
+		scene.ellipse(xOffset + menuWidth + 5, yOffset + 25, xOffset + menuWidth + 15, yOffset + 35);
+		fieldsNonZero = false;
+	}
+	if (!btSecondName.text.size()) {
+		scene.ellipse(xOffset + menuWidth + 5, yOffset + 25 + 30, xOffset + menuWidth + 15, yOffset + 35 + 30);
+		fieldsNonZero = false;
+	}
+	if (!btAge.text.size()) {
+		scene.ellipse(xOffset + menuWidth + 5, yOffset + 25 + 60, xOffset + menuWidth + 15, yOffset + 35 + 60);
+		fieldsNonZero = false;
+	}
+	if (!btPhoneNumber.text.size()) {
+		scene.ellipse(xOffset + menuWidth + 5, yOffset + 25 + 120, xOffset + menuWidth + 15, yOffset + 35 + 120);
+		fieldsNonZero = false;
+	}
+	if (!btEmail.text.size()) {
+		scene.ellipse(xOffset + menuWidth + 5, yOffset + 25 + 150, xOffset + menuWidth + 15, yOffset + 35 + 150);
+		fieldsNonZero = false;
+	}
+	if (!btAdress.text.size()) {
+		scene.ellipse(xOffset + menuWidth + 5, yOffset + 25 + 180, xOffset + menuWidth + 15, yOffset + 35 + 180);
+		fieldsNonZero = false;
+	}
+	if (!isFemale && !isMale) {
+		scene.ellipse(xOffset + menuWidth + 5, yOffset + 25 + 90, xOffset + menuWidth + 15, yOffset + 35 + 90);
+		fieldsNonZero = false;
+	}
+	
+
+	scene.endPaint();
+
+	// Button input 
+	btFirstName.getInput();
+	btSecondName.getInput();
+	btAge.getInput();
+	btPhoneNumber.getInput();
+	btEmail.getInput();
+	btAdress.getInput();
+
+	// Trying to register
+	if (btSignUp.isPressed() && fieldsNonZero) {
+		User u;
+
+		// Logic here
+		u.setID("NOT A NULL :)");
+		return u;
+	}
+
+	// Breaking register mode
+	if (btCancel.isPressed()) {
+		User u;
+		u.setID("cancel");
+		return u;
+	}
+
+	return User();
+}
+
+void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
+
+	scene.beginPaint();
+
+	scene.setBrushColor(bw100);
+	scene.setPenColor(bw100);
+	scene.rect(0, 0, 100, 100);
+	scene.endPaint();
+
+}
+
+void drawTransferMenu(Scene& scene, DataBase& db, User& user, User& target) {
+
 }

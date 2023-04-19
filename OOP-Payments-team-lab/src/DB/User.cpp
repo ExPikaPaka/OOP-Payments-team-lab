@@ -220,7 +220,7 @@ void User::setHash(std::string hash) {
 	this->hash = hash;
 }
 
-User& User::operator=(User& other) {
+User& User::operator=(const User& other) {
 	if (this == &other) {
 		return *this;
 	}
@@ -235,11 +235,13 @@ User& User::operator=(User& other) {
 	email = other.getEmail();
 	address = other.getAddress();
 	transactions = other.getTransactions();
+	balance = other.getBalance();
+	hash = other.getHash();
 
 	return *this;
 }
 
-User& User::operator=(User* other) {
+User& User::operator=(const User* other) {
 	if (other == nullptr) {
 		throw std::invalid_argument("Null pointer passed to User::operator=()");
 	}

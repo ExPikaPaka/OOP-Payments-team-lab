@@ -134,6 +134,17 @@ void UIHelper::Button::setH(int h) {
 	this->h = h;
 }
 
+void UIHelper::Button::setShape(int x, int y, int w, int h) {
+	this->x = x;
+	this->y = y;
+	this->w = w;
+	this->h = h;
+}
+
+void UIHelper::Button::setState(bool pressState) {
+	this->pressed = pressState;
+}
+
 int UIHelper::Button::getX() {
 	return x;
 }

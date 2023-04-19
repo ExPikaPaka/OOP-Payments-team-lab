@@ -49,6 +49,8 @@ namespace UIHelper {
 		void setY(int y);
 		void setW(int w);
 		void setH(int h);
+		void setShape(int x, int y, int w, int h);
+		void setState(bool pressState);
 
 		int getX();
 		int getY();

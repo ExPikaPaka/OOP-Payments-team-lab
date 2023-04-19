@@ -54,8 +54,8 @@ public:
 	void setBalance(float value);
 	void setHash(std::string hash);
 
-	User& operator=(User& other);
-	User& operator=(User* other);
+	User& operator=(const User& other);
+	User& operator=(const User* other);
 
 	void null();
 	std::string toString();
