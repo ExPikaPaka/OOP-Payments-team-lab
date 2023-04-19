@@ -21,3 +21,7 @@ An OPP lab in team. Theme is bank payments system
   
 * 17.02 10.04.2023 \ ExPikaPaka:
   * Added UI login page and Auth module (Fileds verification not implemented yet)
+
+* 12.09 11.04.2023 \ ExPikaPaka:
+  * Implemented log in & sign up logic. Log in pasge update. 
+  * Now is possible to log in with email and password and create a new account. No password stored, only hash. 
