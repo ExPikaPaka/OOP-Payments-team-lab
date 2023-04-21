@@ -29,3 +29,6 @@ An OPP lab in team. Theme is bank payments system
 * 17:25 19.04.2023 \ ExPikaPaka:
   * Added sign up page.
   * Menu is clickable, but doesn't affect data base (Will be implemented soon).
+
+* 19:51 21.04.2023 \ ExPikaPaka:
+  * Full LogIn & SignUp implementation.
