@@ -291,6 +291,8 @@ std::string User::toString() {
 	ss << "Email        : " + email << "\n";
 	ss << "Address      : " + address << "\n";
 	ss << "Transactions : " + std::to_string(transactions.size()) << "\n";
+	ss << "Balance      : " + std::to_string(balance) << "\n";
+	ss << "Hash         : " + hash << "\n";
 
 	std::string userInfo = ss.str();
 

@@ -144,7 +144,7 @@ void DataBase::saveUserTransactions(User& user) {
 		fs.open(path + "/" + userTransacPath + "/" + user.getID() + "/" + std::to_string(i) + ".cut");
 	
 		if (!fs.is_open()) {
-			throw std::ios_base::failure("Could not ope file \"" + path + "/" + userTransacPath + "/" + user.getID() + "/" + std::to_string(i) + ".cut" + "\"");
+			throw std::ios_base::failure("Could not open file \"" + path + "/" + userTransacPath + "/" + user.getID() + "/" + std::to_string(i) + ".cut" + "\"");
 		}
 		
 		fs << userTransactions[i].getTransactionID() << delimiter;
@@ -170,12 +170,14 @@ DataBase::DataBase() {
 	userTransacPath = "users_transactions";
 	fieldsCount = 11;
 	delimiter = '}';
+	dbIsOpen = false;
 }
 
 DataBase::DataBase(std::string path, std::string usersListPath, std::string userTransacPath) {
 	this->path = path;
 	this->usersListPath = usersListPath;
 	this->userTransacPath = userTransacPath;
+	dbIsOpen = false;
 	loadDB(path, usersListPath, userTransacPath);
 	fieldsCount = 11;
 	delimiter = '}';
@@ -194,11 +196,12 @@ void DataBase::loadDB(std::string path, std::string usersListPath, std::string u
 	std::ifstream fs(path + "/" + usersListPath);
 
 	if (!fs.is_open()) {
-		throw std::ios_base::failure("Could not ope file \"" + path + "/" + usersListPath + "\"");
+		throw std::ios_base::failure("Could not open file \"" + path + "/" + usersListPath + "\"");
 	}
 	this->path = path;
 	this->usersListPath = usersListPath;
 	this->userTransacPath = userTransacPath;
+	dbIsOpen = true;
 	fs.close();
 }
 
@@ -232,6 +235,10 @@ void DataBase::saveDB(std::string path, std::string usersListPath, std::string u
 	fs.close();
 }
 
+bool DataBase::isOpen() {
+	return dbIsOpen;
+}
+
 void DataBase::loadAllUsers() {
 	loadUser("-any");
 }
@@ -251,7 +258,7 @@ bool DataBase::loadUser(std::string ID) {
 	std::ifstream fs(path + "/" + usersListPath);
 
 	if (!fs.is_open()) {
-		throw std::ios_base::failure("Could not ope file \"" + path + "/" + usersListPath + "\"");
+		throw std::ios_base::failure("Could not open file \"" + path + "/" + usersListPath + "\"");
 	}
 	User current;
 	int preLoadUsersCount = users.size();

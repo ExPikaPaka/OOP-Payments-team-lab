@@ -11,6 +11,7 @@ protected:
 
 	int fieldsCount;
 	char delimiter;
+	bool dbIsOpen;
 
 	std::vector<std::vector<std::string>> getUsersListString();
 	void saveUsersListString(std::vector<std::vector<std::string>> usersData);
@@ -26,6 +27,8 @@ public:
 
 	// Overrides current DB state into file
 	void saveDB(std::string path, std::string usersListPath = "usersList.cdb", std::string userTransacPath = "users_transactions");
+
+	bool isOpen();
 
 	// Loads user with specified ID. 
 	// Returns 1 if succeed.
