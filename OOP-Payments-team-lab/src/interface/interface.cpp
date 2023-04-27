@@ -1,7 +1,7 @@
 #include "interface.h"
 
 int main() {
-	system("chcp 1251");
+	system("chcp 65001");
 	system("cls");
 
 	// Creating windw
@@ -38,8 +38,6 @@ int main() {
 	}
 
 
-
-
 	bool authenticated = false;
 	bool registerMode = false;
 
@@ -48,6 +46,7 @@ int main() {
 	User currUser;
 	User regUser;
 	std::string hash;
+
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 		if (msg.message == WM_QUIT) {

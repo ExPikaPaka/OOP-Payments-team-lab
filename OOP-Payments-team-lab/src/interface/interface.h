@@ -1,5 +1,6 @@
 #include <iostream>
 #include <Windows.h>
+#include <string>
 #include <fstream>
 #include "..\DB\DataBase.h"
 #include "..\Auth\Auth.h"
@@ -25,8 +26,38 @@ namespace colors {
 	static COLORREF bw140 = RGB(140, 140, 140);
 	static COLORREF bw255 = RGB(255, 255, 255);
 	static COLORREF btPressedCol = RGB(60, 70, 90);
+
+	static COLORREF colBg = RGB(30, 46, 61);
+	static COLORREF colHover = RGB(60, 49, 67);
+	static COLORREF colFace = RGB(39, 52, 68);
+	static COLORREF colLGryBle = RGB(143, 147, 150);
+	static COLORREF colLRed = RGB(255, 100, 100);
 }
 using namespace colors;
+
+std::string wstringToString(const std::wstring& wstr) {
+	if (wstr.empty()) {
+		return std::string();
+	}
+
+	const int size_needed = WideCharToMultiByte(65001, 0, &wstr[0], static_cast<int>(wstr.size()), nullptr, 0, nullptr, nullptr);
+	std::string str(size_needed, 0);
+	WideCharToMultiByte(65001, 0, &wstr[0], static_cast<int>(wstr.size()), &str[0], size_needed, nullptr, nullptr);
+	return str;
+}
+
+std::wstring stringToWString(const std::string& str) {
+	if (str.empty()) {
+		return std::wstring();
+	}
+
+	
+	const int size_needed = MultiByteToWideChar(65001, 0, &str[0], static_cast<int>(str.size()), nullptr, 0);
+	std::wstring wstr(size_needed, 0);
+	MultiByteToWideChar(65001, 0, &str[0], static_cast<int>(str.size()), &wstr[0], size_needed);
+	return wstr;
+}
+
 
 
 bool isEmailTaken(DataBase& db, std::string email) {
@@ -73,15 +104,6 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 
 	bool fieldsNonZero = true;
 	bool clTextFields = clearTextFields;
-
-
-	// Color defines
-	static COLORREF colBg = RGB(30, 46, 61);
-	static COLORREF colHover = RGB(60, 49, 67);
-	static COLORREF colFace = RGB(39, 52, 68);
-	static COLORREF colLGryBle = RGB(143, 147, 150);
-	static COLORREF colLRed = RGB(255, 100, 100);
-
 
 	// Control defines
 	static int menuWidth = 400;
@@ -311,14 +333,6 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 	static std::wstring lbCancel(L"Отменить");
 	static std::wstring lbSignUp(L"Зарегестрироваться");
 	static std::wstring lbLogInfo;
-
-
-	// Color defines
-	static COLORREF colBg = RGB(30, 46, 61);
-	static COLORREF colHover = RGB(60, 49, 67);
-	static COLORREF colFace = RGB(39, 52, 68);
-	static COLORREF colLGryBle = RGB(143, 147, 150);
-	static COLORREF colLRed = RGB(255, 100, 100);
 
 
 	// Buttons defines
@@ -575,33 +589,128 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 	return User();
 }
 
+// Main menu
 void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 
+	// Text defines
 	static std::wstring lbCurrentBalance(L"Текущий баланс");
 	static std::wstring lbTransfer(L"Перевести деньги");
 	static std::wstring lbBlockAccount(L"Заблокировать аккаунт");
 	static std::wstring lbClearBalance(L"Очистить баланс");
 	static std::wstring lbLogOff(L"Очистить баланс");
-	static std::wstring lbAccountInfo(L"Очистить баланс");
 	static std::wstring lbFirstName(L"Очистить баланс");
 	static std::wstring lbSecondName(L"Очистить баланс");
-	static std::wstring lbAccountDetails(L"Очистить баланс");
 
-	UIHelper::Button btBlockAccount(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	UIHelper::Button btClearBalance(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	UIHelper::Button btTransfer(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	UIHelper::Button btLogOff(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	UIHelper::Button btShowAccountDetails(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
 
+
+	// Button defines
+	static UIHelper::Button btBlockAccount(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::Button btClearBalance(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::Button btTransfer(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::Button btLogOff(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::Button btShowAccountDetails(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+
+
+
+	// Size defines
+	static int logoW = 70;
+	static int logoH = 70;
+
+	static int bodyW = 670;
+	static int bodyH = 250;
+
+	static int spaceW = 10;
+	static int spaceH = 10;
+
+	static int menuW = bodyW;
+	static int menuH = logoH + spaceH + bodyH;
+
+	int menuX = (scene.width - menuW) / 2;
+	int menuY = (scene.height - menuH) / 2;
+
+
+
+	// Logo define
+	int colAdj = 0;
+
+	static POINT logoBox[] = { {0, 0}, {70, 0}, {70, 70}, {0, 70} };
+	static POINT logoCorners[] = { {35, 35}, {35, 0}, {70, 0}, {70, 35}, {0, 35}, {0, 70}, {35, 70} };
+	static POINT logoStar[] = { {35, 2}, {45, 27}, {68, 35}, {45, 43}, {35, 68}, {25, 43}, {2, 35}, {25, 27} };
+
+	static const int logoBoxLen = std::size(logoBox);
+	static const int logoCornersLen = std::size(logoCorners);
+	static const int logoStarLen = std::size(logoStar);
+
+	static POINT lBox[logoBoxLen];
+	static POINT lCorners[logoCornersLen];
+	static POINT lStar[logoStarLen];
+
+	for (int i = 0; i < logoBoxLen; i++) {
+		lBox[i].x = logoBox[i].x + menuX;
+		lBox[i].y = logoBox[i].y + menuY;
+	}
+	for (int i = 0; i < logoCornersLen; i++) {
+		lCorners[i].x = logoCorners[i].x + menuX;
+		lCorners[i].y = logoCorners[i].y + menuY;
+	}
+	for (int i = 0; i < logoStarLen; i++) {
+		lStar[i].x = logoStar[i].x + menuX;
+		lStar[i].y = logoStar[i].y + menuY;
+	}
+
+
+
+	// User variables define
+	static std::wstring uFirstName;
+	static std::wstring uSecondName;
+	static std::wstring uInitials;
+	static std::wstring uEmail;
+
+
+
+	// Reshaping elements
+	btShowAccountDetails.setShape(menuX, menuY, logoW, logoH);
+	
+
+
+
+	// Button logics
+	if (btShowAccountDetails.isMouseInArea()) colAdj = 20; // Change logo color in some case
+	if (btShowAccountDetails.isPressed()) colAdj = 0;
+
+
+
+	// Start paint
 	scene.beginPaint();
 
-	scene.setBrushColor(bw100);
-	scene.setPenColor(bw100);
-	scene.rect(0, 0, 100, 100);
-	scene.endPaint();
-}
 
-void drawTransferMenu(Scene& scene, DataBase& db, User& user, User& target) {
+	// Background fill
+	scene.setColor(colBg);
+	scene.rect(0, 0, scene.width, scene.height);
+
+	// Menu drawing
+	scene.setColor(colFace);
+	scene.rect(menuX, menuY, menuX + logoW, menuY + logoH);
+	scene.rect(menuX + logoW + spaceW, menuY, menuX + menuW, menuY + logoH);
+	scene.rect(menuX, menuY + logoH + spaceH, menuX + menuW, menuY + menuH);
+
+	// Logo drawing
+	scene.setColor(60 + colAdj, 70 + colAdj, 90 + colAdj);
+	scene.poly(lBox, logoBoxLen);
+
+	scene.setColor(60 + colAdj, 49 + colAdj, 67 + colAdj);
+	scene.poly(lCorners, logoCornersLen);
+
+	scene.setColor(255, 100 + colAdj, 100 + colAdj);
+	scene.poly(lStar, logoStarLen);
+
+
 	
-	
+	//		Text fields drawind
+
+	// header draw
+
+
+
+	scene.endPaint();
 }
