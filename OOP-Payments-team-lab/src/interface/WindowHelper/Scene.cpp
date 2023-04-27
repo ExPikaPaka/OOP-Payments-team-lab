@@ -73,11 +73,25 @@ void Scene::setColor() {
 	SetDCPenColor(memDC, penColor);
 }
 
+void Scene::setColor(COLORREF color) {
+	setBrushColor(color);
+	setPenColor(color);
+}
+
+void Scene::setColor(int rCol, int gCol, int bCol) {
+	setColor(RGB(rCol, gCol, bCol));
+}
+
 void Scene::setBrushColor(COLORREF color) {
 	brushColor = color;
 }
 void Scene::setPenColor(COLORREF color) {
 	penColor = color;
+}
+
+void Scene::poly(POINT* pt, int ptCount) {
+	setColor();
+	Polygon(memDC, pt, ptCount);
 }
 
 void Scene::rect(int x0, int y0, int x1, int y1) {

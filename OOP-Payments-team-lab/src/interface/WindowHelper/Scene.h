@@ -26,9 +26,12 @@ public:
 	void setObject(HGDIOBJ obj);
 	void selectPenAndBrush();
 	void setColor();
+	void setColor(COLORREF color);
+	void setColor(int rCol, int gCol, int bCol);
 	void setBrushColor(COLORREF color);
 	void setPenColor(COLORREF color);
 
+	void poly(POINT* pt, int ptCount);
 	void rect(int x0, int y0, int x1, int y1);
 	void line(int x0, int y0, int x1, int y1);
 	void boundingBox(int x0, int y0, int x1, int y1);
