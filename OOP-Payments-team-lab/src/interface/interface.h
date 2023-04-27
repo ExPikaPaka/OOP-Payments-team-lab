@@ -75,6 +75,14 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 	bool clTextFields = clearTextFields;
 
 
+	// Color defines
+	static COLORREF colBg = RGB(30, 46, 61);
+	static COLORREF colHover = RGB(60, 49, 67);
+	static COLORREF colFace = RGB(39, 52, 68);
+	static COLORREF colLGryBle = RGB(143, 147, 150);
+	static COLORREF colLRed = RGB(255, 100, 100);
+
+
 	// Control defines
 	static int menuWidth = 400;
 	static int menuHeight = 120;
@@ -83,10 +91,13 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 
 	static int inBtOffsetX = 60;
 
-	static UIHelper::Button btLogIn(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::Button btSignUp(scene, 0, 0, 0, 0, bw40, bw40, bw40, bw40, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btEmail(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btPassword(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	static UIHelper::Button btLogIn(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btSignUp(scene, 0, 0, 0, 0, colFace, colFace, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btEmail(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btPassword(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+
+
+	
 
 	// Clearing fields if needed
 	if (clTextFields) {
@@ -117,13 +128,13 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 	scene.beginPaint();
 
 	// Filling custom bgColor
-	scene.setBrushColor(RGB(30, 32, 34));
-	scene.setPenColor(RGB(30, 32, 34));
+	scene.setBrushColor(colBg);
+	scene.setPenColor(colBg);
 	scene.rect(0, 0, scene.width, scene.height);
 
 	// Drawing menu bounding box
-	scene.setBrushColor(bw40);
-	scene.setPenColor(bw60);
+	scene.setBrushColor(colFace);
+	scene.setPenColor(colFace);
 	scene.rect(xOffset - 20, yOffset - 35, xOffset + menuWidth + 20, yOffset + menuHeight + 20);
 
 	// Draw buttons
@@ -133,22 +144,22 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 	btPassword.draw();
 
 	// Header
-	scene.setPenColor(bw40);
-	scene.setBrushColor(bw40);
+	scene.setPenColor(colFace);
+	scene.setBrushColor(colFace);
 	scene.rect(xOffset + menuWidth / 2 - lbAuth.size() * 10 / 2, yOffset - 50,
 		xOffset + menuWidth / 2 + (lbAuth.size() + 2) * 10 / 2, yOffset - 50 + 27);
-	scene.text((wchar_t*)lbAuth.c_str(), xOffset + menuWidth / 2 - lbAuth.size() * 10 / 2, yOffset - 50, 200, 50, 10, 27, 0, bw255, bw40);
+	scene.text((wchar_t*)lbAuth.c_str(), xOffset + menuWidth / 2 - lbAuth.size() * 10 / 2, yOffset - 50, 200, 50, 10, 27, 0, bw255, colFace);
 	scene.setPenColor(bw60);
 	scene.boundingBox(xOffset + menuWidth / 2 - lbAuth.size() * 10 / 2, yOffset - 50,
 		xOffset + menuWidth / 2 + (lbAuth.size() + 2) * 10 / 2, yOffset - 50 + 27);
 
 	// Fields label
-	scene.text((wchar_t*)lbEmail.c_str(), xOffset, yOffset, inBtOffsetX, 20, 7, 16, 0, bw255, bw40);
-	scene.text((wchar_t*)LbPassword.c_str(), xOffset, yOffset + 30, inBtOffsetX, 20, 7, 16, 0, bw255, bw40);
+	scene.text((wchar_t*)lbEmail.c_str(), xOffset, yOffset, inBtOffsetX, 20, 7, 16, 0, colLGryBle, colFace);
+	scene.text((wchar_t*)LbPassword.c_str(), xOffset, yOffset + 30, inBtOffsetX, 20, 7, 16, 0, colLGryBle, colFace);
 
 	// Log in label
 	scene.text((wchar_t*)lbLogIn.c_str(), xOffset + menuWidth / 2 - (lbLogIn.size() / 2) * 7, yOffset + 90,
-		100, 20, 7, 16, 0, bw255, btLogIn.getCurrentFillColor());
+		100, 20, 7, 16, 0, colLGryBle, btLogIn.getCurrentFillColor());
 
 	// Sign up labbel 
 	scene.text((wchar_t*)lbSingUp.c_str(), xOffset + (menuWidth / 2) - (lbSingUp.size() / 2) * 7, yOffset + 115,
@@ -157,10 +168,10 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 
 	// LogInfo label
 	if (lbLogInfo.size()) {
-		scene.setBrushColor(bw40);
+		scene.setBrushColor(colFace);
 		scene.setPenColor(bw60);
 		scene.rect(xOffset - 20, yOffset + menuHeight + 50, xOffset + menuWidth + 20, yOffset + menuHeight + 120);
-		scene.text((wchar_t*)lbLogInfo.c_str(), xOffset, yOffset + menuHeight + 50 + 10, menuWidth, 50, 7, 16, 0, RGB(255, 100, 100), bw40);
+		scene.text((wchar_t*)lbLogInfo.c_str(), xOffset, yOffset + menuHeight + 50 + 10, menuWidth, 50, 7, 16, 0, RGB(255, 100, 100), colFace);
 	}
 
 	// Check if input > 0
@@ -301,16 +312,25 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 	static std::wstring lbSignUp(L"Зарегестрироваться");
 	static std::wstring lbLogInfo;
 
+
+	// Color defines
+	static COLORREF colBg = RGB(30, 46, 61);
+	static COLORREF colHover = RGB(60, 49, 67);
+	static COLORREF colFace = RGB(39, 52, 68);
+	static COLORREF colLGryBle = RGB(143, 147, 150);
+	static COLORREF colLRed = RGB(255, 100, 100);
+
+
 	// Buttons defines
-	static UIHelper::InputButton btFirstName(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btSecondName(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btAge(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::Button btMale(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::Button btFemale(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btPhoneNumber(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::InputButton btAdress(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::Button btSignUp(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::Button btCancel(scene, 0, 0, 0, 0, bw40, bw40, bw40, bw40, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btFirstName(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btSecondName(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btAge(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btMale(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btFemale(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btPhoneNumber(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btAdress(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btSignUp(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btCancel(scene, 0, 0, 0, 0, colFace, colFace, colHover, colHover, btPressedCol, btPressedCol);
 
 	// Menu shape defines
 	static int menuWidth = 400;
@@ -348,25 +368,26 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 	scene.beginPaint();
 
 	// Filling custom bgColor
-	scene.setBrushColor(RGB(30, 32, 34));
-	scene.setPenColor(RGB(30, 32, 34));
+	scene.setBrushColor(colBg);
+	scene.setPenColor(colBg);
 	scene.rect(0, 0, scene.width, scene.height);
 
 	// Filling menu
-	scene.setBrushColor(bw40);
-	scene.setPenColor(bw60);
+	scene.setBrushColor(colFace);
+	scene.setPenColor(colFace);
 	scene.rect(xOffset - 20, yOffset - 20, xOffset + menuWidth + 20, yOffset + menuHeight + 20);
 
 
 	//		 Labels draw
+	// 
 	// SignUp message drawing
-	scene.setPenColor(bw40);
-	scene.setBrushColor(bw40);
+	scene.setPenColor(bw60);
+	scene.setBrushColor(colFace);
 	scene.rect(xOffset + menuWidth / 2 - ((lbSignUpAsk.size() + 1) * 10 / 2), yOffset - 27 / 2 - 20,
 		xOffset + menuWidth / 2 + ((lbSignUpAsk.size() + 1) * 10 / 2), yOffset + 27 / 2 - 20);
 
 	scene.text((wchar_t*)lbSignUpAsk.c_str(), xOffset + menuWidth / 2 - ((lbSignUpAsk.size() + 1) * 10 / 2), yOffset - 27 / 2 - 20,
-		600, 27, 10, 27, 0, bw255, bw40);
+		600, 27, 10, 27, 0, bw255, colFace);
 
 	scene.setPenColor(bw60);
 	scene.boundingBox(xOffset + menuWidth / 2 - ((lbSignUpAsk.size() + 1) * 10 / 2), yOffset - 27 / 2 - 20,
@@ -401,10 +422,10 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 		btMale.setHoverFillColor(btPressedCol);
 		btMale.setHoverOutlineColor(btPressedCol);
 	} else {
-		btMale.setFillColor(bw50);
-		btMale.setOutlineColor(bw50);
-		btMale.setHoverFillColor(bw60);
-		btMale.setHoverOutlineColor(bw60);
+		btMale.setFillColor(colBg);
+		btMale.setOutlineColor(colBg);
+		btMale.setHoverFillColor(colHover);
+		btMale.setHoverOutlineColor(colHover);
 	}
 	if (isFemale) {
 		btFemale.setFillColor(btPressedCol);
@@ -412,10 +433,10 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 		btFemale.setHoverFillColor(btPressedCol);
 		btFemale.setHoverOutlineColor(btPressedCol);
 	} else {
-		btFemale.setFillColor(bw50);
-		btFemale.setOutlineColor(bw50);
-		btFemale.setHoverFillColor(bw60);
-		btFemale.setHoverOutlineColor(bw60);
+		btFemale.setFillColor(colBg);
+		btFemale.setOutlineColor(colBg);
+		btFemale.setHoverFillColor(colHover);
+		btFemale.setHoverOutlineColor(colHover);
 	}
 
 	// Drawing buttons
@@ -431,24 +452,24 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 
 
 	// Other labels draw
-	scene.text((wchar_t*)lbFirstName.c_str(), xOffset, yOffset + 20, 200, 20, 7, 16, 0, bw255, bw40);
-	scene.text((wchar_t*)lbSecondName.c_str(), xOffset, yOffset + 20 + 30, 200, 20, 7, 16, 0, bw255, bw40);
-	scene.text((wchar_t*)lbAge.c_str(), xOffset, yOffset + 20 + 60, 200, 20, 7, 16, 0, bw255, bw40);
-	scene.text((wchar_t*)lbGender.c_str(), xOffset, yOffset + 20 + 90, 200, 20, 7, 16, 0, bw255, bw40);
-	scene.text((wchar_t*)lbMale.c_str(), xOffset + xLbOffset + ((menuWidth - xLbOffset) / 2 - 5 - (lbMale.size() + 1) * 7) / 2, yOffset + 20 + 90, 200, 20, 7, 16, 0, bw255, btMale.getCurrentFillColor());
-	scene.text((wchar_t*)lbFemale.c_str(), xOffset + xLbOffset + ((menuWidth - xLbOffset) / 2 + 5) + ((menuWidth - xLbOffset) / 2 - 5 - (lbMale.size() + 1) * 7) / 2, yOffset + 20 + 90, 200, 20, 7, 16, 0, bw255, btFemale.getCurrentFillColor());
-	scene.text((wchar_t*)lbPhoneNumber.c_str(), xOffset, yOffset + 20 + 120, 200, 20, 7, 16, 0, bw255, bw40);
-	scene.text((wchar_t*)lbAdress.c_str(), xOffset, yOffset + 20 + 150, 200, 20, 7, 16, 0, bw255, bw40);
-	scene.text((wchar_t*)lbSignUp.c_str(), xOffset + (menuWidth - (lbSignUp.size() + 1) * 7) / 2, yOffset + 20 + 210, 200, 20, 7, 16, 0, bw255, btSignUp.getCurrentFillColor());
+	scene.text((wchar_t*)lbFirstName.c_str(), xOffset, yOffset + 20, 200, 20, 7, 16, 0, colLGryBle, colFace);
+	scene.text((wchar_t*)lbSecondName.c_str(), xOffset, yOffset + 20 + 30, 200, 20, 7, 16, 0, colLGryBle, colFace);
+	scene.text((wchar_t*)lbAge.c_str(), xOffset, yOffset + 20 + 60, 200, 20, 7, 16, 0, colLGryBle, colFace);
+	scene.text((wchar_t*)lbGender.c_str(), xOffset, yOffset + 20 + 90, 200, 20, 7, 16, 0, colLGryBle, colFace);
+	scene.text((wchar_t*)lbMale.c_str(), xOffset + xLbOffset + ((menuWidth - xLbOffset) / 2 - 5 - (lbMale.size() + 1) * 7) / 2, yOffset + 20 + 90, 200, 20, 7, 16, 0, colLGryBle, btMale.getCurrentFillColor());
+	scene.text((wchar_t*)lbFemale.c_str(), xOffset + xLbOffset + ((menuWidth - xLbOffset) / 2 + 5) + ((menuWidth - xLbOffset) / 2 - 5 - (lbMale.size() + 1) * 7) / 2, yOffset + 20 + 90, 200, 20, 7, 16, 0, colLGryBle, btFemale.getCurrentFillColor());
+	scene.text((wchar_t*)lbPhoneNumber.c_str(), xOffset, yOffset + 20 + 120, 200, 20, 7, 16, 0, colLGryBle, colFace);
+	scene.text((wchar_t*)lbAdress.c_str(), xOffset, yOffset + 20 + 150, 200, 20, 7, 16, 0, colLGryBle, colFace);
+	scene.text((wchar_t*)lbSignUp.c_str(), xOffset + (menuWidth - (lbSignUp.size() + 1) * 7) / 2, yOffset + 20 + 210, 200, 20, 7, 16, 0, colLGryBle, btSignUp.getCurrentFillColor());
 	scene.text((wchar_t*)lbCancel.c_str(), xOffset + (menuWidth - (lbCancel.size() + 1) * 7) / 2, yOffset + 20 + 235, 200, 20, 7, 16, 0, bw100, btCancel.getCurrentFillColor());
 
 
 	// LogInfo label
 	if (lbLogInfo.size()) {
-		scene.setBrushColor(bw40);
+		scene.setBrushColor(colFace);
 		scene.setPenColor(bw60);
 		scene.rect(xOffset - 20, yOffset + menuHeight + 50, xOffset + menuWidth + 20, yOffset + menuHeight + 120);
-		scene.text((wchar_t*)lbLogInfo.c_str(), xOffset, yOffset + menuHeight + 50 + 10, menuWidth, 50, 7, 16, 0, RGB(255, 100, 100), bw40);
+		scene.text((wchar_t*)lbLogInfo.c_str(), xOffset, yOffset + menuHeight + 50 + 10, menuWidth, 50, 7, 16, 0, RGB(255, 100, 100), colFace);
 	}
 
 
@@ -556,15 +577,31 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 
 void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 
+	static std::wstring lbCurrentBalance(L"Текущий баланс");
+	static std::wstring lbTransfer(L"Перевести деньги");
+	static std::wstring lbBlockAccount(L"Заблокировать аккаунт");
+	static std::wstring lbClearBalance(L"Очистить баланс");
+	static std::wstring lbLogOff(L"Очистить баланс");
+	static std::wstring lbAccountInfo(L"Очистить баланс");
+	static std::wstring lbFirstName(L"Очистить баланс");
+	static std::wstring lbSecondName(L"Очистить баланс");
+	static std::wstring lbAccountDetails(L"Очистить баланс");
+
+	UIHelper::Button btBlockAccount(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	UIHelper::Button btClearBalance(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	UIHelper::Button btTransfer(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	UIHelper::Button btLogOff(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+	UIHelper::Button btShowAccountDetails(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
+
 	scene.beginPaint();
 
 	scene.setBrushColor(bw100);
 	scene.setPenColor(bw100);
 	scene.rect(0, 0, 100, 100);
 	scene.endPaint();
-
 }
 
 void drawTransferMenu(Scene& scene, DataBase& db, User& user, User& target) {
-
+	
+	
 }
