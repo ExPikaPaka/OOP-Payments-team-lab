@@ -1,13 +1,14 @@
 #include "interface.h"
 
 int main() {
-	system("chcp 65001");
+	system("chcp 1251");
+	std::wcout.imbue(std::locale(""));
 	system("cls");
 
 	// Creating windw
 	HWND window = 0;
 	WindowHelper wh;
-	window = wh.initWindow((wchar_t*)L"Sample window", 100, 100, 800, 600, WS_OVERLAPPEDWINDOW);
+	window = wh.initWindow((wchar_t*)L"Name me please and give a logo", 100, 100, 800, 600, WS_OVERLAPPEDWINDOW);
 	ShowWindow(window, SW_SHOWNORMAL);
 
 	MSG msg = {};

@@ -24,6 +24,10 @@ namespace colors {
 	static COLORREF bw120 = RGB(120, 120, 120);
 	static COLORREF bw130 = RGB(130, 130, 130);
 	static COLORREF bw140 = RGB(140, 140, 140);
+	static COLORREF bw200 = RGB(200, 200, 200);
+	static COLORREF bw210 = RGB(210, 210, 210);
+	static COLORREF bw220 = RGB(220, 220, 220);
+	static COLORREF bw230 = RGB(230, 230, 230);
 	static COLORREF bw255 = RGB(255, 255, 255);
 	static COLORREF btPressedCol = RGB(60, 70, 90);
 
@@ -40,9 +44,9 @@ std::string wstringToString(const std::wstring& wstr) {
 		return std::string();
 	}
 
-	const int size_needed = WideCharToMultiByte(65001, 0, &wstr[0], static_cast<int>(wstr.size()), nullptr, 0, nullptr, nullptr);
+	const int size_needed = WideCharToMultiByte(1251, 0, &wstr[0], static_cast<int>(wstr.size()), nullptr, 0, nullptr, nullptr);
 	std::string str(size_needed, 0);
-	WideCharToMultiByte(65001, 0, &wstr[0], static_cast<int>(wstr.size()), &str[0], size_needed, nullptr, nullptr);
+	WideCharToMultiByte(1251, 0, &wstr[0], static_cast<int>(wstr.size()), &str[0], size_needed, nullptr, nullptr);
 	return str;
 }
 
@@ -51,10 +55,9 @@ std::wstring stringToWString(const std::string& str) {
 		return std::wstring();
 	}
 
-	
-	const int size_needed = MultiByteToWideChar(65001, 0, &str[0], static_cast<int>(str.size()), nullptr, 0);
+	const int size_needed = MultiByteToWideChar(1251, 0, &str[0], static_cast<int>(str.size()), nullptr, 0);
 	std::wstring wstr(size_needed, 0);
-	MultiByteToWideChar(65001, 0, &str[0], static_cast<int>(str.size()), &wstr[0], size_needed);
+	MultiByteToWideChar(1251, 0, &str[0], static_cast<int>(str.size()), &wstr[0], size_needed);
 	return wstr;
 }
 
@@ -597,19 +600,31 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	static std::wstring lbTransfer(L"Перевести деньги");
 	static std::wstring lbBlockAccount(L"Заблокировать аккаунт");
 	static std::wstring lbClearBalance(L"Очистить баланс");
-	static std::wstring lbLogOff(L"Очистить баланс");
-	static std::wstring lbFirstName(L"Очистить баланс");
-	static std::wstring lbSecondName(L"Очистить баланс");
+	static std::wstring lbLogOff(L"Выйти");
+	static std::wstring lbByPhone(L"За почтой");
+	static std::wstring lbByEmail(L"За тел. номером");
+	static std::wstring lbAskPhone(L"Введите тел. номер получателя");
+	static std::wstring lbAskEmail(L"Введите ел. адрес получателя");
+	static std::wstring lbAskValue(L"Сумма");
+	static std::wstring lbReason(L"Предназначение");
+	static std::wstring lbSend(L"Отправить");
+	static std::wstring lbCancel(L"Отменить");
 
 
 
 	// Button defines
-	static UIHelper::Button btBlockAccount(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::Button btClearBalance(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::Button btTransfer(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::Button btLogOff(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-	static UIHelper::Button btShowAccountDetails(scene, 0, 0, 0, 0, bw50, bw50, bw60, bw60, btPressedCol, btPressedCol);
-
+	static UIHelper::Button btBlockAccount(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btClearBalance(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btTransfer(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btTsfrByPhone(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btTsfrByEmail(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btLogOff(scene, 0, 0, 0, 0);
+	static UIHelper::Button btShowAccountDetails(scene, 0, 0, 0, 0);
+	static UIHelper::InputButton btTsfrDest(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btTsfrVal(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::InputButton btTsfReason(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btSend(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btCancel(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
 
 
 	// Size defines
@@ -628,6 +643,15 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	int menuX = (scene.width - menuW) / 2;
 	int menuY = (scene.height - menuH) / 2;
 
+	static int subMenuW = menuW - 200 - 20 - 50;
+	static int subMenuH = menuH - 20 - logoH - spaceH;
+	int subMenuX = menuX + menuW - 10 - subMenuW;
+	int subMenuY = menuY + logoH + spaceH + 10;
+	
+	// Logic boolean defines
+	static bool blTransfer = false;
+	static bool blTsfrByPhone = false;
+	static bool blTsfrByEmail = false;
 
 
 	// Logo define
@@ -661,22 +685,55 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 
 
 	// User variables define
-	static std::wstring uFirstName;
-	static std::wstring uSecondName;
-	static std::wstring uInitials;
-	static std::wstring uEmail;
-
+	static std::wstring uFirstName = stringToWString(user.getFirstName());
+	static std::wstring uSecondName = stringToWString(user.getSecondName());
+	static std::wstring uInitials = uFirstName + std::wstring(L" ") + uSecondName;
+	static std::wstring uEmail = stringToWString(user.getEmail());
+	std::wstringstream wss;
+	wss << L"Бал.: " << std::fixed << std::setprecision(2) << user.getBalance() << L" у.е.";
+	std::wstring uBalance = wss.str();
 
 
 	// Reshaping elements
 	btShowAccountDetails.setShape(menuX, menuY, logoW, logoH);
-	
-
+	btTransfer.setShape(menuX + 10, menuY + logoH + spaceH + 10, 200, 20);
+	btClearBalance.setShape(menuX + 10, menuY + menuH - 10 - 40 - 10, 200, 20);
+	btBlockAccount.setShape(menuX + 10, menuY + menuH - 10 - 20, 200, 20);
+	btTsfrByPhone.setShape(menuX + 10, menuY + logoH + spaceH + 10 + 20 + 10, 200, 20);
+	btTsfrByEmail.setShape(menuX + 10, menuY + logoH + spaceH + 10 + 40 + 20, 200, 20);
+	btTsfrDest.setShape(subMenuX, subMenuY + 20 + 10, subMenuW, 20);
+	btTsfrVal.setShape(subMenuX + 100, subMenuY + 60, subMenuW - 100, 20);
+	btTsfReason.setShape(subMenuX, subMenuY + 120, subMenuW, subMenuH - 150);
+	btSend.setShape(subMenuX, subMenuY + 210, subMenuW / 2 - 5, 20);
+	btCancel.setShape(subMenuX + subMenuW / 2 + 5, subMenuY + 210, subMenuW / 2 - 5, 20);
 
 
 	// Button logics
 	if (btShowAccountDetails.isMouseInArea()) colAdj = 20; // Change logo color in some case
 	if (btShowAccountDetails.isPressed()) colAdj = 0;
+
+	if (btTransfer.isPressed()) { // Show/Hide transfer menu
+		if (blTransfer) {
+			blTransfer = false;
+			blTsfrByEmail = false;
+			blTsfrByPhone = false;
+		} else {
+			blTransfer = true;
+		}
+	}
+
+	if (blTsfrByEmail || blTsfrByPhone) {
+		btTsfrDest.getInput();
+		btTsfrVal.getInput();
+		btTsfReason.getInput();
+	}
+
+	
+
+	
+
+
+
 
 
 
@@ -709,8 +766,63 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	//		Text fields drawind
 
 	// header draw
+	scene.text((wchar_t*)uInitials.c_str(), menuX + logoW + spaceW + 10, menuY + 10, 600, 20, 8, 20, 0, bw200, colFace);
+	scene.text((wchar_t*)uEmail.c_str(), menuX + logoW + spaceW + 10, menuY + 10 + 20 + 5, 600, 20, 8, 20, 0, bw200, colFace);
+	scene.text((wchar_t*)uBalance.c_str(), menuX + menuW - 10 - (uBalance.size() - 1) * 8, menuY + 10 + 20 + 5, 600, 20, 8, 20, 0, bw200, colFace);
+
+	// Buttons draw
+	scene.setColor(colBg);
+	btTransfer.draw();
+	btClearBalance.draw();
+	btBlockAccount.draw();
+
+	scene.text((wchar_t*)lbTransfer.c_str(), menuX + 10 + 8, menuY + logoH + spaceH + 10, 200, 20, 8, 20, 0, bw200, btTransfer.getCurrentFillColor());
+	scene.text((wchar_t*)lbClearBalance.c_str(), menuX + 10 + 8, menuY + menuH - 10 - 40 - 10, 200, 20, 8, 20, 0, bw200, btClearBalance.getCurrentFillColor());
+	scene.text((wchar_t*)lbBlockAccount.c_str(), menuX + 10 + 8, menuY + menuH - 10 - 20, 200, 20, 8, 20, 0, bw200, btBlockAccount.getCurrentFillColor());
 
 
+	// Transfer buttons
+	if (blTransfer) {
+		btTsfrByPhone.draw();
+		btTsfrByEmail.draw();
+
+		scene.text((wchar_t*)lbByPhone.c_str(), btTsfrByPhone.getX() + 8, btTsfrByPhone.getY(), 200, 20, 8, 20, 0, bw200, btTsfrByPhone.getCurrentFillColor());
+		scene.text((wchar_t*)lbByEmail.c_str(), btTsfrByEmail.getX() + 8, btTsfrByEmail.getY(), 200, 20, 8, 20, 0, bw200, btTsfrByEmail.getCurrentFillColor());
+	}
+
+	if (blTransfer) {
+		if (btTsfrByPhone.isPressed()) {
+			blTsfrByPhone = true;
+			blTsfrByEmail = false;
+		}
+		if (btTsfrByEmail.isPressed()) {
+			blTsfrByPhone = false;
+			blTsfrByEmail = true;
+		}
+
+		if (blTsfrByPhone) { // if transfer by phone draw
+			scene.text((wchar_t*)lbAskPhone.c_str(), subMenuX + (subMenuW - lbAskPhone.size() * 8) / 2, subMenuY, 400, 20, 8, 20, 0, bw200, colFace);
+
+		}
+		if (blTsfrByEmail) { // if transfer by email draw
+			scene.text((wchar_t*)lbAskEmail.c_str(), subMenuX + (subMenuW - lbAskEmail.size() * 8) / 2, subMenuY, 400, 20, 8, 20, 0, bw200, colFace);
+		}
+
+		if (blTsfrByEmail || blTsfrByPhone) {  // Drawing other buttons, inputs, and texts
+			btTsfrDest.draw();
+			scene.text((wchar_t*)lbAskValue.c_str(), subMenuX + 8, subMenuY + 60, 100, 20, 8, 20, 0, bw200, colFace);
+			btTsfrVal.draw();
+		
+			scene.text((wchar_t*)lbReason.c_str(), subMenuX + 8, subMenuY + 90, 200, 20, 8, 20, 0, bw200, colFace);
+			btTsfReason.draw();
+
+			btSend.draw();
+			btCancel.draw();
+
+			scene.text((wchar_t*)lbSend.c_str(), subMenuX + (subMenuW / 2 - lbSend.size() * 8) / 2, subMenuY + 210, 100, 20, 8, 20, 0, bw200, btSend.getCurrentFillColor());
+			scene.text((wchar_t*)lbCancel.c_str(), subMenuX + subMenuW / 2 + 5 + (subMenuW / 2 - lbSend.size() * 8) / 2, subMenuY + 210, 100, 20, 8, 20, 0, bw200, btCancel.getCurrentFillColor());
+		}
+	}
 
 	scene.endPaint();
 }
