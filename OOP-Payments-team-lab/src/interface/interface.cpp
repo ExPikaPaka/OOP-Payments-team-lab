@@ -20,7 +20,7 @@ int main() {
 
 
 	// Verification
-	Auth authentificator;
+	Auth authenticator;
 
 
 	// Creating scene
@@ -39,7 +39,7 @@ int main() {
 	}
 
 
-	bool authenticated = false;
+	bool authenticated = true;
 	bool registerMode = false;
 
 	bool clearAuthFieldsOnce = false;

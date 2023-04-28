@@ -825,4 +825,16 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	}
 
 	scene.endPaint();
+
+
+
+	//			Options logic
+
+	// Transfer logic
+	if (blTsfrByEmail || blTsfrByPhone) {
+		if (btSend.isPressed()) {
+
+		 }
+	}
+
 }
