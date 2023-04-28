@@ -22,11 +22,11 @@ std::string Transaction::getSenderBankCID() {
     return sender_bank_CID;
 }
 
-std::string Transaction::getRecieverBankCID() {
+std::string Transaction::getReceiverBankCID() {
     return reciever_bank_CID;
 }
 
-float Transaction::getAmout() {
+float Transaction::getAmount() {
     return amount;
 }
 
@@ -50,11 +50,11 @@ void Transaction::setSenderBankCID(std::string sender_bank_CID) {
     this->sender_bank_CID = sender_bank_CID;
 }
 
-void Transaction::setRecieverBankCID(std::string reciever_bank_CID) {
+void Transaction::setReceiverBankCID(std::string reciever_bank_CID) {
     this->reciever_bank_CID = reciever_bank_CID;
 }
 
-void Transaction::setAmout(float amount) {
+void Transaction::setAmount(float amount) {
     this->amount = amount;
 }
 

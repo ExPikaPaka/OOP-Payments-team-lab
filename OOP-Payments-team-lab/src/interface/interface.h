@@ -601,14 +601,15 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	static std::wstring lbBlockAccount(L"Заблокировать аккаунт");
 	static std::wstring lbClearBalance(L"Очистить баланс");
 	static std::wstring lbLogOff(L"Выйти");
-	static std::wstring lbByPhone(L"За почтой");
-	static std::wstring lbByEmail(L"За тел. номером");
+	static std::wstring lbByPhone(L"За тел. номером");
+	static std::wstring lbByEmail(L"За почтой");
 	static std::wstring lbAskPhone(L"Введите тел. номер получателя");
 	static std::wstring lbAskEmail(L"Введите ел. адрес получателя");
 	static std::wstring lbAskValue(L"Сумма");
 	static std::wstring lbReason(L"Предназначение");
 	static std::wstring lbSend(L"Отправить");
 	static std::wstring lbCancel(L"Отменить");
+	static std::wstring lbTsfrHistory(L"История транзакций");
 
 
 
@@ -625,6 +626,9 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	static UIHelper::InputButton btTsfReason(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
 	static UIHelper::Button btSend(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
 	static UIHelper::Button btCancel(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btTsfrHistory(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btTsfrHUp(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
+	static UIHelper::Button btTsfrHDown(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
 
 
 	// Size defines
@@ -652,6 +656,7 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	static bool blTransfer = false;
 	static bool blTsfrByPhone = false;
 	static bool blTsfrByEmail = false;
+	static bool blTsfrHistory = false;
 
 
 	// Logo define
@@ -684,6 +689,21 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 
 
 
+	// Transactions history define
+	static int tsfrStart = 0;
+
+
+
+
+	// User update
+	try {
+		db.clearUserList();
+		db.loadAllUsers();
+		user = db.getUserWithID(user.getID());
+	} catch (const std::exception& e) {
+		std::cout << e.what() << '\n';
+	}
+
 	// User variables define
 	static std::wstring uFirstName = stringToWString(user.getFirstName());
 	static std::wstring uSecondName = stringToWString(user.getSecondName());
@@ -697,6 +717,7 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	// Reshaping elements
 	btShowAccountDetails.setShape(menuX, menuY, logoW, logoH);
 	btTransfer.setShape(menuX + 10, menuY + logoH + spaceH + 10, 200, 20);
+	btTsfrHistory.setShape(menuX + 10, menuY + menuH - 10 - 80, 200, 20);
 	btClearBalance.setShape(menuX + 10, menuY + menuH - 10 - 40 - 10, 200, 20);
 	btBlockAccount.setShape(menuX + 10, menuY + menuH - 10 - 20, 200, 20);
 	btTsfrByPhone.setShape(menuX + 10, menuY + logoH + spaceH + 10 + 20 + 10, 200, 20);
@@ -706,6 +727,8 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	btTsfReason.setShape(subMenuX, subMenuY + 120, subMenuW, subMenuH - 150);
 	btSend.setShape(subMenuX, subMenuY + 210, subMenuW / 2 - 5, 20);
 	btCancel.setShape(subMenuX + subMenuW / 2 + 5, subMenuY + 210, subMenuW / 2 - 5, 20);
+	btTsfrHDown.setShape(subMenuX + subMenuW - 20, subMenuY, 20, 20);
+	btTsfrHUp.setShape(subMenuX + subMenuW - 50, subMenuY, 20, 20);
 
 
 	// Button logics
@@ -720,6 +743,18 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 		} else {
 			blTransfer = true;
 		}
+		blTsfrHistory = false;
+	}
+
+	if (btTsfrHistory.isPressed()) {
+		if (blTsfrHistory) {
+			blTsfrHistory = false;
+		} else {
+			blTsfrHistory = true;
+			blTsfrByEmail = false;
+			blTsfrByPhone = false;
+			blTransfer = false;
+		}
 	}
 
 	if (blTsfrByEmail || blTsfrByPhone) {
@@ -728,12 +763,18 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 		btTsfReason.getInput();
 	}
 
-	
+	if (btTsfrHUp.isPressed()) {
+		if (tsfrStart < user.getTransactionsCount()) {
+			tsfrStart++;
+		}
+	}
+	if (btTsfrHDown.isPressed()) {
+		if (tsfrStart > 0) {
+			tsfrStart--;
+		}
+	}
 
 	
-
-
-
 
 
 
@@ -763,7 +804,7 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 
 
 	
-	//		Text fields drawind
+	//		Text fields drawing
 
 	// header draw
 	scene.text((wchar_t*)uInitials.c_str(), menuX + logoW + spaceW + 10, menuY + 10, 600, 20, 8, 20, 0, bw200, colFace);
@@ -775,11 +816,53 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	btTransfer.draw();
 	btClearBalance.draw();
 	btBlockAccount.draw();
+	btTsfrHistory.draw();
+	
 
 	scene.text((wchar_t*)lbTransfer.c_str(), menuX + 10 + 8, menuY + logoH + spaceH + 10, 200, 20, 8, 20, 0, bw200, btTransfer.getCurrentFillColor());
 	scene.text((wchar_t*)lbClearBalance.c_str(), menuX + 10 + 8, menuY + menuH - 10 - 40 - 10, 200, 20, 8, 20, 0, bw200, btClearBalance.getCurrentFillColor());
 	scene.text((wchar_t*)lbBlockAccount.c_str(), menuX + 10 + 8, menuY + menuH - 10 - 20, 200, 20, 8, 20, 0, bw200, btBlockAccount.getCurrentFillColor());
+	scene.text((wchar_t*)lbTsfrHistory.c_str(), menuX + 10 + 8, menuY + menuH - 10 - 80, 200, 20, 8, 20, 0, bw200, btTsfrHistory.getCurrentFillColor());
 
+
+	// Transfer history draw
+	if (blTsfrHistory) {
+		btTsfrHUp.draw();
+		btTsfrHDown.draw();
+
+		scene.text((wchar_t*)lbTsfrHistory.c_str(), subMenuX, subMenuY, 200, 20, 8, 20, 0, bw200, colFace);
+
+		
+		for (int i = tsfrStart; i < min(user.getTransactionsCount(), tsfrStart + 7); i++) {
+			Transaction tsc = user.getTransaction(i);
+			User dest;
+
+				
+			try {
+				dest = db.getUserWithID(tsc.getSenderBankCID());
+			
+				scene.setColor(140, 200, 210);
+				if (tsc.getSenderBankCID() == user.getBankCID()) {
+					scene.setColor(255, 100, 100);
+						dest = db.getUserWithID(tsc.getReceiverBankCID());
+				}
+			} catch (const std::exception& e) {
+				std::cout << e.what() << '\n';
+			}
+			scene.ellipse(subMenuX + 2, subMenuY + 30 + i * 30 + 2 - 30 * tsfrStart, subMenuX + 20 - 2, subMenuY + 30 + i * 30 + 20 - 2 - 30 * tsfrStart);
+
+			scene.setColor(colBg);
+			scene.rect(subMenuX + 20, subMenuY + 30 + i * 30 - 30 * tsfrStart, subMenuX + subMenuW, subMenuY + 30 + i * 30 + 20 - 30 * tsfrStart);
+			scene.text((wchar_t*)stringToWString(tsc.getPurpose()).c_str(), subMenuX + 20 + 7, subMenuY + 30 + i * 30 - 30 * tsfrStart, 150, 20, 7, 16, 0, bw200, colBg);
+			scene.text((wchar_t*)stringToWString(dest.getFirstName() + " " + dest.getSecondName()).c_str(), subMenuX + subMenuW - 200 - 10, subMenuY + 30 + i * 30 - 30 * tsfrStart, 200, 20, 7, 16, 0, bw200, colBg);
+			
+			std::wstringstream wss;
+			wss << std::fixed << std::setprecision(2) << tsc.getAmount();
+			std::wstring tscAmount = wss.str();
+			scene.text((wchar_t*)tscAmount.c_str(), subMenuX + subMenuW - tscAmount.size() * 7, subMenuY + 30 + i * 30 - 30 * tsfrStart, 200, 20, 7, 16, 0, bw200, colBg);
+
+		}
+	}
 
 	// Transfer buttons
 	if (blTransfer) {
@@ -828,13 +911,101 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 
 
 
+
+
+
 	//			Options logic
 
 	// Transfer logic
-	if (blTsfrByEmail || blTsfrByPhone) {
-		if (btSend.isPressed()) {
+	if (blTsfrByEmail || blTsfrByPhone || btClearBalance.isPressed()) {
+		if (btSend.isPressed() || btClearBalance.isPressed()) {
+			User receiver;
 
-		 }
+			try {
+				// Getting receiver user
+				for (int i = 0; i < db.usersCount(); i++) {
+					if (blTsfrByEmail) {
+						if (db.at(i)->getEmail() == btTsfrDest.text) {
+							receiver = db.at(i);
+						}
+					}
+					if (blTsfrByPhone) {
+						if (db.at(i)->getPhoneNumber() == btTsfrDest.text) {
+							receiver = db.at(i);
+						}
+					}
+				}
+
+
+				
+
+				if (receiver.getID() != "null" || btClearBalance.isPressed()) {
+					Transaction tr;
+
+					tr.setSenderBankCID(user.getBankCID());
+					tr.setCommission(0);
+
+					// Clearing balance if bt pressed
+					if (btClearBalance.isPressed()) {
+						tr.setAmount(user.getBalance());
+						tr.setPurpose("Clear balance");
+						tr.setReceiverBankCID("-1");
+
+					} else { // Usual transaction
+						tr.setAmount(std::stoi(btTsfrVal.text));
+						tr.setPurpose(btTsfReason.text);
+						tr.setReceiverBankCID(receiver.getBankCID());
+
+						// Check if specified money amount is logical
+						if (tr.getAmount() > user.getBalance()) {
+							throw std::runtime_error("Not enough money");
+						}
+						if (tr.getAmount() <= 0) {
+							throw std::runtime_error("Invalid amount");
+						}
+					}
+
+					
+					// Saving users
+					for (int i = 0; i < db.usersCount(); i++) {
+						if (db.at(i)->getID() == user.getID()) {
+							tr.setTransactionID(user.getTransactionsCount() + 1);
+							db.at(i)->setBalance(db.at(i)->getBalance() - tr.getAmount());
+							db.at(i)->addTransaction(tr);
+							db.saveUser(user.getID());
+							user = db.at(i);
+							db.saveUserTransactions(user);
+						}
+						if (db.at(i)->getID() == receiver.getID()) {
+							tr.setTransactionID(receiver.getTransactionsCount() + 1);
+							db.at(i)->setBalance(db.at(i)->getBalance() + tr.getAmount());
+							db.at(i)->addTransaction(tr);
+							db.saveUser(receiver.getID());
+							receiver = db.at(i);
+							db.saveUserTransactions(receiver);
+						}
+					}
+				} else {
+					throw std::runtime_error("Receiver not found");
+				}
+			} catch (const std::exception& e) {
+				std::cout << e.what() << '\n';
+			}
+		}
 	}
 
+
+	if (btBlockAccount.isPressed()) {
+		try {
+			db.getUserWithID(user.getID())->setHash(std::string("BLOCKED_") + user.getHash());
+			db.saveUser(user.getID());
+			std::cout << db.getUserWithID(user.getID())->getHash();
+		} catch (const std::exception& e) {
+			std::cout << e.what();
+		}
+		exit(0);
+	}
+	if (btTransfer.isPressed() || btSend.isPressed() || btTsfrHistory.isPressed() || btTsfrHUp.isPressed() || btTsfrHDown.isPressed()) {
+		Sleep(100);
+	}
 }

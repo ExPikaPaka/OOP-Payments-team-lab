@@ -17,16 +17,16 @@ public:
 	~Transaction();
 	int getTransactionID();
 	std::string getSenderBankCID();
-	std::string getRecieverBankCID();
-	float getAmout();
+	std::string getReceiverBankCID();
+	float getAmount();
 	float getCommission();
 	std::string getPurpose();
 	DateTime& transactionTime();
 
 	void setTransactionID(int transaction_ID);
 	void setSenderBankCID(std::string sender_bank_CID);
-	void setRecieverBankCID(std::string reciever_bank_CID);
-	void setAmout(float amount);
+	void setReceiverBankCID(std::string reciever_bank_CID);
+	void setAmount(float amount);
 	void setCommission(float commission);
 	void setPurpose(std::string purpose);
 

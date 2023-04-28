@@ -63,27 +63,26 @@ void DataBase::saveUsersListString(std::vector<std::vector<std::string>> usersDa
 	}
 	fs.close();
 }
-
+#include <iostream>
 void DataBase::loadUserTransactions(User& user) {
 	std::string temp = path + "/" + userTransacPath + "/" + user.getID();
 	std::wstring dirPath(temp.begin(), temp.end());
 
+
 	// Get transactions count:
+	int fileCount = 0;
 	std::filesystem::directory_iterator dirIter;
+		
 	try {
 		dirIter = std::filesystem::directory_iterator(dirPath);
+		for (const auto& file : dirIter) {
+			if (file.is_regular_file()) {
+				++fileCount;
+			}
+		}
 	} catch (std::filesystem::filesystem_error& e) {
 		return;
 	}
-
-	int fileCount = 0;
-
-	for (auto& entry : dirIter) {
-		if (entry.is_regular_file()) {
-			++fileCount;
-		}
-	}
-
 
 	std::ifstream fs;
 
@@ -115,8 +114,8 @@ void DataBase::loadUserTransactions(User& user) {
 
 				current.setTransactionID(std::stoi(fields[0]));
 				current.setSenderBankCID(fields[1]);
-				current.setRecieverBankCID(fields[2]);
-				current.setAmout(std::stof(fields[3]));
+				current.setReceiverBankCID(fields[2]);
+				current.setAmount(std::stof(fields[3]));
 				current.setCommission(std::stof(fields[4]));
 				current.setPurpose(fields[5]);
 				current.transactionTime().setHour(std::stoi(fields[6]));
@@ -149,8 +148,8 @@ void DataBase::saveUserTransactions(User& user) {
 		
 		fs << userTransactions[i].getTransactionID() << delimiter;
 		fs << userTransactions[i].getSenderBankCID() << delimiter;
-		fs << userTransactions[i].getRecieverBankCID() << delimiter;
-		fs << userTransactions[i].getAmout() << delimiter;
+		fs << userTransactions[i].getReceiverBankCID() << delimiter;
+		fs << userTransactions[i].getAmount() << delimiter;
 		fs << userTransactions[i].getCommission() << delimiter;
 		fs << userTransactions[i].getPurpose() << delimiter;
 		fs << userTransactions[i].transactionTime().getTime().tm_hour << delimiter;
@@ -260,7 +259,6 @@ bool DataBase::loadUser(std::string ID) {
 	if (!fs.is_open()) {
 		throw std::ios_base::failure("Could not open file \"" + path + "/" + usersListPath + "\"");
 	}
-	User current;
 	int preLoadUsersCount = users.size();
 
 	// Reading single line (to the '\n')
@@ -282,6 +280,7 @@ bool DataBase::loadUser(std::string ID) {
 		}
 
 		if (lineIterator) {
+			User current;
 			current.setID(fields[0]);
 			current.setBankCID(fields[1]);
 			current.setFirstName(fields[2]);
@@ -392,13 +391,6 @@ void DataBase::addUser(User user) {
 }
 
 void DataBase::delUser(std::string ID) {
-	for (int i = 0; i < users.size(); i++) {
-		if (users[i].getID() == ID) {
-			users[i].null();
-			break;
-		}
-	}
-
 	// Loading entire DB
 	std::vector <std::vector<std::string>> usersData;
 	try {
@@ -411,6 +403,12 @@ void DataBase::delUser(std::string ID) {
 	for (int i = 0; i < usersData.size(); i++) {
 		if (usersData[i][0] == ID) {
 			usersData.erase(usersData.begin() + i);
+			break;
+		}
+	}
+	for (int i = 0; i < users.size(); i++) {
+		if (users[i].getID() == ID) {
+			users.erase(users.begin() + i);
 			break;
 		}
 	}

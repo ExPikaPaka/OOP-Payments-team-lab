@@ -1,11 +1,12 @@
 #include "interface.h"
 
+//int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 int main() {
 	system("chcp 1251");
 	std::wcout.imbue(std::locale(""));
 	system("cls");
 
-	// Creating windw
+	// Creating window
 	HWND window = 0;
 	WindowHelper wh;
 	window = wh.initWindow((wchar_t*)L"Name me please and give a logo", 100, 100, 800, 600, WS_OVERLAPPEDWINDOW);
@@ -39,7 +40,7 @@ int main() {
 	}
 
 
-	bool authenticated = true;
+	bool authenticated = false;
 	bool registerMode = false;
 
 	bool clearAuthFieldsOnce = false;
