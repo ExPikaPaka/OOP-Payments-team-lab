@@ -98,6 +98,16 @@ bool isPhoneNumberTaken(DataBase& db, std::string phoneNumber) {
 
 // Auth menu. Returns true if user Authenticated
 User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
+	
+#ifdef UA 
+	// Text defines
+	static std::wstring lbAuth(L"  Авторизація  ");
+	static std::wstring lbEmail(L"Пошта");
+	static std::wstring LbPassword(L"Пароль");
+	static std::wstring lbLogIn(L"Увійти");
+	static std::wstring lbSingUp(L"Зареєструватися");
+	static std::wstring lbLogInfo;
+#else     
 	// Text defines
 	static std::wstring lbAuth(L"  Авторизация  ");
 	static std::wstring lbEmail(L"Почта");
@@ -105,6 +115,10 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 	static std::wstring lbLogIn(L"Войти");
 	static std::wstring lbSingUp(L"Зарегистрироваться");
 	static std::wstring lbLogInfo;
+#endif     
+
+
+	
 
 	bool fieldsNonZero = true;
 	bool clTextFields = clearTextFields;
@@ -131,7 +145,7 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 
 
 	// Clearing log info, if the las update was > 2 sec ago
-	if (std::chrono::steady_clock::now() > logInfoStart + std::chrono::seconds(1)) {
+	if (std::chrono::steady_clock::now() > logInfoStart + std::chrono::seconds(2)) {
 		if (lbLogInfo.size()) {
 			lbLogInfo.clear();
 		}
@@ -245,7 +259,7 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 			goodEmail = true;
 		} catch (const std::exception& e) {
 			std::string tmp(e.what());
-			lbLogInfo = std::wstring(tmp.begin(), tmp.end()) + L"  ";
+			lbLogInfo = std::wstring(tmp.begin(), tmp.end());
 			logInfoStart = std::chrono::steady_clock::now();
 		}
 
@@ -263,8 +277,6 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 					u = db.at(i);
 					break;
 				}
-				lbLogInfo += L"Указанный пользователь не найден! Попробуйте снова.";
-				logInfoStart = std::chrono::steady_clock::now();
 			}
 
 			// If we found user
@@ -272,11 +284,26 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 				std::cout << "Calculated hash: " << hash << '\n';
 				std::cout << "User hash:       " << u.getHash() << '\n';
 
-				lbLogInfo += L"Неправильный пароль!  ";
+#ifdef UA  
+				lbLogInfo = L"Невірний пароль!";
 				if (hash == u.getHash()) {
-					lbLogInfo = L"С возвращением!  ";
+					lbLogInfo = L"З поверненням!";
 					return u;
 				}
+#else  
+				lbLogInfo = L"Неправильный пароль!";
+				if (hash == u.getHash()) {
+					lbLogInfo = L"С возвращением!";
+					return u;
+				}
+#endif
+				logInfoStart = std::chrono::steady_clock::now();
+			} else {
+#ifdef UA   
+				lbLogInfo = L"Зазначеного користувача не знайдено! Спробуйте знову.";
+#else     
+				lbLogInfo = L"Указанный пользователь не найден! Попробуйте снова.";
+#endif
 				logInfoStart = std::chrono::steady_clock::now();
 			}
 
@@ -294,7 +321,7 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 			goodEmail = true;
 		} catch (const std::exception& e) {
 			std::string tmp(e.what());
-			lbLogInfo = std::wstring(tmp.begin(), tmp.end()) + L"  ";
+			lbLogInfo = std::wstring(tmp.begin(), tmp.end());
 			logInfoStart = std::chrono::steady_clock::now();
 		}
 
@@ -314,7 +341,11 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 			for (int i = 0; i < db.usersCount(); i++) {
 				if (db.at(i)->getEmail() == btEmail.text) {
 					u = db.at(i);
-					lbLogInfo += L"Указанный пользователь уже существует! \nПопробуйте войти.  ";
+#ifdef UA 
+					lbLogInfo = L"Зазначений користувач вже існує! \nСпробуйте увійти.";
+#else
+					lbLogInfo = L"Указанный пользователь уже существует! \nПопробуйте войти.";
+#endif
 					logInfoStart = std::chrono::steady_clock::now();
 					break;
 				}
@@ -343,7 +374,21 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 	bool fieldsNonZero = true;
 	bool clTextFields = clearTextFields;
 
-
+#ifdef UA 
+	// Labels defines
+	static std::wstring lbSignUpAsk(L"  Реєстрація  ");
+	static std::wstring lbFirstName(L"Імя");
+	static std::wstring lbSecondName(L"Прізвище");
+	static std::wstring lbAge(L"Вік");
+	static std::wstring lbGender(L"Стать");
+	static std::wstring lbMale(L"чоловічий");
+	static std::wstring lbFemale(L"жіночий");
+	static std::wstring lbPhoneNumber(L"Тел. номер");
+	static std::wstring lbAddress(L"Адреса");
+	static std::wstring lbCancel(L"Скасувати");
+	static std::wstring lbSignUp(L"Зареєструватись");
+	static std::wstring lbLogInfo;
+#else
 	// Labels defines
 	static std::wstring lbSignUpAsk(L"  Регистрация  ");
 	static std::wstring lbFirstName(L"Имя");
@@ -357,7 +402,7 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 	static std::wstring lbCancel(L"Отменить");
 	static std::wstring lbSignUp(L"Зарегистрироваться");
 	static std::wstring lbLogInfo;
-
+#endif
 
 	// Buttons defines
 	static UIHelper::InputButton btFirstName(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
@@ -384,7 +429,7 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 
 
 	// Clearing log info, if the las update was > 2 sec ago
-	if (std::chrono::steady_clock::now() > logInfoStart + std::chrono::seconds(1)) {
+	if (std::chrono::steady_clock::now() > logInfoStart + std::chrono::seconds(2)) {
 		if (lbLogInfo.size()) {
 			lbLogInfo.clear();
 		}
@@ -578,14 +623,22 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 			user.setSecondName(btSecondName.text);
 			user.setAge(std::stoi(btAge.text));
 			if (std::stoi(btAge.text) < 14) {
-				lbLogInfo += L"Пользователь должен быть не младше 14 лет!  ";
+#ifdef UA 
+				lbLogInfo = L"Користувач повинен бути не молодшим 14 років!";
+#else
+				lbLogInfo = L"Пользователь должен быть не младше 14 лет!";
+#endif
 				throw std::runtime_error("");
 			}
 
 			user.setGender(isMale ? "Male" : "Female");
 			user.setPhoneNumber(btPhoneNumber.text);
 			if (isPhoneNumberTaken(db, btPhoneNumber.text)) {
-				lbLogInfo += L"Тел. номер уже занят!  ";
+#ifdef UA 
+				lbLogInfo = L"Тел. номер уже зайнятий!";
+#else
+				lbLogInfo = L"Тел. номер уже занят!";
+#endif
 
 				throw std::runtime_error("");
 			}
@@ -604,13 +657,17 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 
 			// Check if age field made exception
 			if (std::string(e.what()) == "invalid stoi argument") {
-				lbLogInfo += L"Возраст должен быть числом!  ";
+#ifdef UA 
+				lbLogInfo = L"Вік має бути числом!";
+#else
+				lbLogInfo = L"Возраст должен быть числом!";
+#endif	
 			} else {
 
 				// Any other exception
 				std::string ex = e.what();
 				if (ex.size()) {
-					lbLogInfo = std::wstring(ex.begin(), ex.end()) + L"  ";
+					lbLogInfo = std::wstring(ex.begin(), ex.end());
 				}
 			}
 
@@ -632,7 +689,24 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 
 // Main menu
 void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
-
+#ifdef UA 
+	// Text defines
+	static std::wstring lbCurrentBalance(L"Поточний баланс");
+	static std::wstring lbTransfer(L"Переказати гроші");
+	static std::wstring lbBlockAccount(L"Заблокувати обл. запис");
+	static std::wstring lbClearBalance(L"Очистити баланс");
+	static std::wstring lbLogOff(L"Вийти");
+	static std::wstring lbByPhone(L"За тел. номером");
+	static std::wstring lbByEmail(L"За поштою");
+	static std::wstring lbAskPhone(L"Введіть тел. номер одержувача");
+	static std::wstring lbAskEmail(L"Введіть ел. адресу одержувача");
+	static std::wstring lbAskValue(L"Сума");
+	static std::wstring lbReason(L"Призначення");
+	static std::wstring lbSend(L"Надіслати");
+	static std::wstring lbCancel(L"Скасувати");
+	static std::wstring lbTsfrHistory(L"Історія транзакцій");
+	static std::wstring lbLogInfo;
+#else
 	// Text defines
 	static std::wstring lbCurrentBalance(L"Текущий баланс");
 	static std::wstring lbTransfer(L"Перевести деньги");
@@ -649,7 +723,7 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	static std::wstring lbCancel(L"Отменить");
 	static std::wstring lbTsfrHistory(L"История транзакций");
 	static std::wstring lbLogInfo;
-
+#endif
 
 
 	// Button defines
