@@ -1094,7 +1094,7 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 					if (btClearBalance.isPressed()) {
 						tr.setAmount(user.getBalance());
 						tr.setPurpose("Clear balance");
-						tr.setReceiverBankCID("-1");
+						tr.setReceiverBankCID(user.getID());
 
 					} else { // Usual transaction
 						tr.setAmount(std::stoi(btTsfrVal.text));

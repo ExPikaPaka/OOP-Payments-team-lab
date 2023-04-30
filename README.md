@@ -1,7 +1,19 @@
 # OOP-Payments-team-lab
-An OPP lab in team. Theme is bank payments system
+An OPP lab - pet project. Theme is bank payments system  
+Programm allows easily interact with custom test bank system. To use program user must register, or login. 
+User has possibility to transfer money to other person via phone number or email, explore transfer menu, 
+clear balance, block account.  Every interaction between the user, the program, and the database goes 
+through checks for data validity or other errors. In case of occurrence of such, the user is notified by a pop-up window.
 
-### Changelog:
+
+## Versions:
+* v1.0 Final. 
+  * Auth menu
+  * Register menu
+  * Main menu
+  * RU/UA localization
+
+## Changelog:
 * 14:35 01.04.2023 \ ExPikaPaka:  
   * Repository pre-configuration
 
@@ -35,3 +47,8 @@ An OPP lab in team. Theme is bank payments system
 
 * 18:40 27.04.2023 \ ExPikaPaka:
   * Added main menu UI.
+  
+* 20:20 30.04.2023 \ ExPikaPaka:
+  * Final version. v1.0
+  * Russian/Ukrainian localization trough #def UA
+  * UI improvement
