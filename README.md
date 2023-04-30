@@ -1,5 +1,5 @@
 # OOP-Payments-team-lab
-An OPP lab - pet project. Theme is bank payments system  
+C++ OPP lab - pet project. Theme is bank payments system  
 Programm allows easily interact with custom test bank system. To use program user must register, or login. 
 User has possibility to transfer money to other person via phone number or email, explore transfer menu, 
 clear balance, block account.  Every interaction between the user, the program, and the database goes 
