@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <string>
 #include <fstream>
+#include <regex>
 #include "..\DB\DataBase.h"
 #include "..\Auth\Auth.h"
 #include "Timer/Timer.h"
@@ -122,7 +123,19 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 	static UIHelper::InputButton btPassword(scene, 0, 0, 0, 0, colBg, colBg, colHover, colHover, btPressedCol, btPressedCol);
 
 
-	
+	// LbLogInfo clearing time logic define
+	static auto logInfoStart = std::chrono::steady_clock::now();
+
+
+
+
+
+	// Clearing log info, if the las update was > 2 sec ago
+	if (std::chrono::steady_clock::now() > logInfoStart + std::chrono::seconds(1)) {
+		if (lbLogInfo.size()) {
+			lbLogInfo.clear();
+		}
+	}
 
 	// Clearing fields if needed
 	if (clTextFields) {
@@ -145,6 +158,9 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 	// Recieve input to labels
 	btEmail.getInput();
 	btPassword.getInput();
+
+
+
 
 
 
@@ -229,7 +245,8 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 			goodEmail = true;
 		} catch (const std::exception& e) {
 			std::string tmp(e.what());
-			lbLogInfo = std::wstring(tmp.begin(), tmp.end());
+			lbLogInfo = std::wstring(tmp.begin(), tmp.end()) + L"  ";
+			logInfoStart = std::chrono::steady_clock::now();
 		}
 
 
@@ -246,7 +263,8 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 					u = db.at(i);
 					break;
 				}
-				lbLogInfo = L"Указанный пользователь не найден! Попробуйте снова.";
+				lbLogInfo += L"Указанный пользователь не найден! Попробуйте снова.";
+				logInfoStart = std::chrono::steady_clock::now();
 			}
 
 			// If we found user
@@ -254,11 +272,12 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 				std::cout << "Calculated hash: " << hash << '\n';
 				std::cout << "User hash:       " << u.getHash() << '\n';
 
-				lbLogInfo = L"Неправильный пароль!";
+				lbLogInfo += L"Неправильный пароль!  ";
 				if (hash == u.getHash()) {
-					lbLogInfo = L"С возвращением!";
+					lbLogInfo = L"С возвращением!  ";
 					return u;
 				}
+				logInfoStart = std::chrono::steady_clock::now();
 			}
 
 		}
@@ -275,7 +294,8 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 			goodEmail = true;
 		} catch (const std::exception& e) {
 			std::string tmp(e.what());
-			lbLogInfo = std::wstring(tmp.begin(), tmp.end());
+			lbLogInfo = std::wstring(tmp.begin(), tmp.end()) + L"  ";
+			logInfoStart = std::chrono::steady_clock::now();
 		}
 
 
@@ -294,7 +314,8 @@ User drawAuth(Scene& scene, DataBase& db, bool clearTextFields) {
 			for (int i = 0; i < db.usersCount(); i++) {
 				if (db.at(i)->getEmail() == btEmail.text) {
 					u = db.at(i);
-					lbLogInfo = L"Указанный пользователь уже существует! \nПопробуйте войти.";
+					lbLogInfo += L"Указанный пользователь уже существует! \nПопробуйте войти.  ";
+					logInfoStart = std::chrono::steady_clock::now();
 					break;
 				}
 			}
@@ -332,9 +353,9 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 	static std::wstring lbMale(L"мужской");
 	static std::wstring lbFemale(L"женский");
 	static std::wstring lbPhoneNumber(L"Тел. номер");
-	static std::wstring lbAdress(L"Адресс");
+	static std::wstring lbAddress(L"Адрес");
 	static std::wstring lbCancel(L"Отменить");
-	static std::wstring lbSignUp(L"Зарегестрироваться");
+	static std::wstring lbSignUp(L"Зарегистрироваться");
 	static std::wstring lbLogInfo;
 
 
@@ -356,7 +377,18 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 	int yOffset = (scene.height / 2) - menuHeight / 2;
 	int xLbOffset = 100;
 
+	// LbLogInfo clearing time logic define
+	static auto logInfoStart = std::chrono::steady_clock::now();
 
+
+
+
+	// Clearing log info, if the las update was > 2 sec ago
+	if (std::chrono::steady_clock::now() > logInfoStart + std::chrono::seconds(1)) {
+		if (lbLogInfo.size()) {
+			lbLogInfo.clear();
+		}
+	}
 
 	// Clearing fields if needed
 	if (clTextFields) {
@@ -378,6 +410,9 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 		isFemale = false;
 		isMale = false;
 	}
+
+
+
 
 
 
@@ -476,7 +511,7 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 	scene.text((wchar_t*)lbMale.c_str(), xOffset + xLbOffset + ((menuWidth - xLbOffset) / 2 - 5 - (lbMale.size() + 1) * 7) / 2, yOffset + 20 + 90, 200, 20, 7, 16, 0, colLGryBle, btMale.getCurrentFillColor());
 	scene.text((wchar_t*)lbFemale.c_str(), xOffset + xLbOffset + ((menuWidth - xLbOffset) / 2 + 5) + ((menuWidth - xLbOffset) / 2 - 5 - (lbMale.size() + 1) * 7) / 2, yOffset + 20 + 90, 200, 20, 7, 16, 0, colLGryBle, btFemale.getCurrentFillColor());
 	scene.text((wchar_t*)lbPhoneNumber.c_str(), xOffset, yOffset + 20 + 120, 200, 20, 7, 16, 0, colLGryBle, colFace);
-	scene.text((wchar_t*)lbAdress.c_str(), xOffset, yOffset + 20 + 150, 200, 20, 7, 16, 0, colLGryBle, colFace);
+	scene.text((wchar_t*)lbAddress.c_str(), xOffset, yOffset + 20 + 150, 200, 20, 7, 16, 0, colLGryBle, colFace);
 	scene.text((wchar_t*)lbSignUp.c_str(), xOffset + (menuWidth - (lbSignUp.size() + 1) * 7) / 2, yOffset + 20 + 210, 200, 20, 7, 16, 0, colLGryBle, btSignUp.getCurrentFillColor());
 	scene.text((wchar_t*)lbCancel.c_str(), xOffset + (menuWidth - (lbCancel.size() + 1) * 7) / 2, yOffset + 20 + 235, 200, 20, 7, 16, 0, bw100, btCancel.getCurrentFillColor());
 
@@ -543,14 +578,14 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 			user.setSecondName(btSecondName.text);
 			user.setAge(std::stoi(btAge.text));
 			if (std::stoi(btAge.text) < 14) {
-				lbLogInfo = L"Пользователь должен быть не младше 14 лет!";
+				lbLogInfo += L"Пользователь должен быть не младше 14 лет!  ";
 				throw std::runtime_error("");
 			}
 
 			user.setGender(isMale ? "Male" : "Female");
 			user.setPhoneNumber(btPhoneNumber.text);
 			if (isPhoneNumberTaken(db, btPhoneNumber.text)) {
-				lbLogInfo = L"Тел. номер уже занят!";
+				lbLogInfo += L"Тел. номер уже занят!  ";
 
 				throw std::runtime_error("");
 			}
@@ -562,22 +597,24 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 			// Adding user and saving it in case all is good
 			db.addUser(user);
 			db.saveUser(std::to_string(db.usersCount() - 1));
+			logInfoStart = std::chrono::steady_clock::now();
 
 			return user;
 		} catch (const std::exception& e) {
 
 			// Check if age field made exception
 			if (std::string(e.what()) == "invalid stoi argument") {
-				lbLogInfo = L"Возраст должен быть числом!";
+				lbLogInfo += L"Возраст должен быть числом!  ";
 			} else {
 
 				// Any other exception
 				std::string ex = e.what();
 				if (ex.size()) {
-					lbLogInfo = std::wstring(ex.begin(), ex.end());
+					lbLogInfo = std::wstring(ex.begin(), ex.end()) + L"  ";
 				}
 			}
 
+			logInfoStart = std::chrono::steady_clock::now();
 			std::cout << "Caught exception during user registration. Exception:\n" << e.what() << '\n';
 		}
 	}
@@ -591,6 +628,7 @@ User drawRegister(Scene& scene, DataBase& db, User& user, bool clearTextFields) 
 
 	return User();
 }
+
 
 // Main menu
 void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
@@ -610,6 +648,7 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	static std::wstring lbSend(L"Отправить");
 	static std::wstring lbCancel(L"Отменить");
 	static std::wstring lbTsfrHistory(L"История транзакций");
+	static std::wstring lbLogInfo;
 
 
 
@@ -635,7 +674,7 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 	static int logoW = 70;
 	static int logoH = 70;
 
-	static int bodyW = 670;
+	static int bodyW = 770;
 	static int bodyH = 250;
 
 	static int spaceW = 10;
@@ -691,6 +730,11 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 
 	// Transactions history define
 	static int tsfrStart = 0;
+
+
+	// LbLogInfo clearing time logic define
+	static auto logInfoStart = std::chrono::steady_clock::now();
+
 
 
 
@@ -774,7 +818,16 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 		}
 	}
 
+
+	// Clearing log info, if the las update was > 2 sec ago
+	if (std::chrono::steady_clock::now() > logInfoStart + std::chrono::seconds(1)) {
+		if (lbLogInfo.size()) {
+			lbLogInfo.clear();
+		}
+	}
 	
+
+
 
 
 
@@ -834,7 +887,7 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 
 		
 		for (int i = tsfrStart; i < min(user.getTransactionsCount(), tsfrStart + 7); i++) {
-			Transaction tsc = user.getTransaction(i);
+			Transaction tsc = user.getTransaction(user.getTransactionsCount() - i - 1);
 			User dest;
 
 				
@@ -849,17 +902,22 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 			} catch (const std::exception& e) {
 				std::cout << e.what() << '\n';
 			}
-			scene.ellipse(subMenuX + 2, subMenuY + 30 + i * 30 + 2 - 30 * tsfrStart, subMenuX + 20 - 2, subMenuY + 30 + i * 30 + 20 - 2 - 30 * tsfrStart);
+			std::string rtms = tsc.transactionTime().toString();
+			std::wstring tm = std::wstring(rtms.begin(), rtms.begin() + 5) + std::wstring(rtms.begin() + 8, rtms.end());
 
-			scene.setColor(colBg);
-			scene.rect(subMenuX + 20, subMenuY + 30 + i * 30 - 30 * tsfrStart, subMenuX + subMenuW, subMenuY + 30 + i * 30 + 20 - 30 * tsfrStart);
-			scene.text((wchar_t*)stringToWString(tsc.getPurpose()).c_str(), subMenuX + 20 + 7, subMenuY + 30 + i * 30 - 30 * tsfrStart, 150, 20, 7, 16, 0, bw200, colBg);
-			scene.text((wchar_t*)stringToWString(dest.getFirstName() + " " + dest.getSecondName()).c_str(), subMenuX + subMenuW - 200 - 10, subMenuY + 30 + i * 30 - 30 * tsfrStart, 200, 20, 7, 16, 0, bw200, colBg);
-			
 			std::wstringstream wss;
 			wss << std::fixed << std::setprecision(2) << tsc.getAmount();
 			std::wstring tscAmount = wss.str();
-			scene.text((wchar_t*)tscAmount.c_str(), subMenuX + subMenuW - tscAmount.size() * 7, subMenuY + 30 + i * 30 - 30 * tsfrStart, 200, 20, 7, 16, 0, bw200, colBg);
+
+			scene.ellipse(subMenuX + 2, subMenuY + 30 + i * 30 + 2 - 30 * tsfrStart, subMenuX + 20 - 2, subMenuY + 30 + i * 30 + 20 - 2 - 30 * tsfrStart);
+			scene.setColor(colBg);
+			scene.rect(subMenuX + 20, subMenuY + 30 + i * 30 - 30 * tsfrStart, subMenuX + subMenuW, subMenuY + 30 + i * 30 + 20 - 30 * tsfrStart);
+			
+			scene.text((wchar_t*)stringToWString(tsc.getPurpose()).c_str(), subMenuX + 20 + 7, subMenuY + 30 + i * 30 - 30 * tsfrStart, 150, 20, 7, 16, 0, bw200, colBg);
+			scene.text((wchar_t*)stringToWString(dest.getFirstName() + " " + dest.getSecondName()).c_str(), subMenuX + subMenuW - 60 - 8 - 120 - 8 - 100, subMenuY + 30 + i * 30 - 30 * tsfrStart, 100, 20, 7, 16, 0, bw200, colBg);
+		
+			scene.text((wchar_t*)tm.c_str(), subMenuX + subMenuW - 60 - 7 - 120 - 7, subMenuY + 30 + i * 30 - 30 * tsfrStart, 120, 20, 7, 16, 0, bw200, colBg);
+			scene.text((wchar_t*)tscAmount.c_str(), subMenuX + subMenuW - tscAmount.size() * 7 - 7, subMenuY + 30 + i * 30 - 30 * tsfrStart, 200, 20, 7, 16, 0, bw200, colBg);
 
 		}
 	}
@@ -878,6 +936,7 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 			blTsfrByPhone = true;
 			blTsfrByEmail = false;
 		}
+		
 		if (btTsfrByEmail.isPressed()) {
 			blTsfrByPhone = false;
 			blTsfrByEmail = true;
@@ -905,6 +964,18 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 			scene.text((wchar_t*)lbSend.c_str(), subMenuX + (subMenuW / 2 - lbSend.size() * 8) / 2, subMenuY + 210, 100, 20, 8, 20, 0, bw200, btSend.getCurrentFillColor());
 			scene.text((wchar_t*)lbCancel.c_str(), subMenuX + subMenuW / 2 + 5 + (subMenuW / 2 - lbSend.size() * 8) / 2, subMenuY + 210, 100, 20, 8, 20, 0, bw200, btCancel.getCurrentFillColor());
 		}
+	}
+
+
+	// LogInfo label
+	if (lbLogInfo.size()) {
+		scene.setBrushColor(colFace);
+		scene.setPenColor(bw60);
+		scene.rect(menuX, menuY + menuH + 10, menuX + menuW, menuY + menuH + 10 + 70);
+
+		int xCentered = menuX + (menuW - lbLogInfo.size() * 7) / 2;
+		xCentered = xCentered < menuX ? menuX : xCentered;
+		scene.text((wchar_t*)lbLogInfo.c_str(), xCentered + 10, menuY + menuH + 20, menuW - xCentered - 10, 50, 7, 16, 0, (std::regex_match(std::string(lbLogInfo.begin(), lbLogInfo.end()), std::regex("(Success\\s*)*")) ? RGB(100, 255, 100) : RGB(255, 100, 100)), colFace);
 	}
 
 	scene.endPaint();
@@ -988,7 +1059,15 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 				} else {
 					throw std::runtime_error("Receiver not found");
 				}
+				lbLogInfo += L"Success  ";
+				logInfoStart = std::chrono::steady_clock::now();
 			} catch (const std::exception& e) {
+				std::string ex = e.what();
+				if (ex.size()) {
+					lbLogInfo += std::wstring(ex.begin(), ex.end()) + L"  ";
+					logInfoStart = std::chrono::steady_clock::now();
+				}
+
 				std::cout << e.what() << '\n';
 			}
 		}
@@ -1000,7 +1079,15 @@ void drawOptionsMenu(Scene& scene, DataBase& db, User& user) {
 			db.getUserWithID(user.getID())->setHash(std::string("BLOCKED_") + user.getHash());
 			db.saveUser(user.getID());
 			std::cout << db.getUserWithID(user.getID())->getHash();
+			lbLogInfo += L"Success  ";
+			logInfoStart = std::chrono::steady_clock::now();
 		} catch (const std::exception& e) {
+			std::string ex = e.what();
+			if (ex.size()) {
+				lbLogInfo += std::wstring(ex.begin(), ex.end()) + L"  ";
+				logInfoStart = std::chrono::steady_clock::now();
+			}
+
 			std::cout << e.what();
 		}
 		exit(0);

@@ -9,7 +9,7 @@ int main() {
 	// Creating window
 	HWND window = 0;
 	WindowHelper wh;
-	window = wh.initWindow((wchar_t*)L"Name me please and give a logo", 100, 100, 800, 600, WS_OVERLAPPEDWINDOW);
+	window = wh.initWindow((wchar_t*)L"Name me please and give a logo", 100, 100, 900, 600, WS_OVERLAPPEDWINDOW);
 	ShowWindow(window, SW_SHOWNORMAL);
 
 	MSG msg = {};
