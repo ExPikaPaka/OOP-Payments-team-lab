@@ -4,6 +4,17 @@ Program allows easily interact with custom test bank system. To use program user
 User has possibility to transfer money to other person via phone number or email, explore transfer menu, 
 clear balance, block account.  Every interaction between the user, the program, and the database goes 
 through checks for data validity or other errors. In case of occurrence of such, the user is notified by a pop-up window.
+Program has 2 localizations - Ukrainian, and Russian.
+
+
+## Demo:
+<img src="https://github.com/ExPikaPaka/OOP-Payments-team-lab/assets/112851715/f413bb6e-c93e-4742-82b9-397d02d51b70" width="400" height="300">
+<img src="https://github.com/ExPikaPaka/OOP-Payments-team-lab/assets/112851715/bd34c2ee-01f7-4913-8d34-7578b24cc731" width="400" height="300">
+<img src="https://github.com/ExPikaPaka/OOP-Payments-team-lab/assets/112851715/e8003d4b-a0e5-44d6-a67e-b536c23e1c0f" width="400" height="300">
+<img src="https://github.com/ExPikaPaka/OOP-Payments-team-lab/assets/112851715/a8c64e28-b185-4132-a353-84b1df16da37" width="400" height="300">
+<img src="https://github.com/ExPikaPaka/OOP-Payments-team-lab/assets/112851715/f810fe48-2c47-48ec-b16b-dafb27981d6a" width="400" height="300">
+<img src="https://github.com/ExPikaPaka/OOP-Payments-team-lab/assets/112851715/512cc580-c7fc-4456-9b46-26b1d6fca901" width="400" height="300">
+
 
 
 ## Versions:
